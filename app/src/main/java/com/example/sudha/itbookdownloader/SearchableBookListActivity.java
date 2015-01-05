@@ -1,7 +1,8 @@
 package com.example.sudha.itbookdownloader;
 
+
+import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class BookListActivity extends ActionBarActivity
+public class SearchableBookListActivity extends ActionBarActivity
 {
-
+    private final String LOG_TAG = SearchableBookListActivity.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -20,9 +21,21 @@ public class BookListActivity extends ActionBarActivity
         setContentView(R.layout.activity_book_list);
         if (savedInstanceState == null)
         {
-            getSupportFragmentManager().beginTransaction().add(R.id.container, new BookListFragment()).commit();
+            getFragmentManager().beginTransaction().add(R.id.container, new BookListFragment()).commit();
+            /*Intent intent = getIntent();
+            if (Intent.ACTION_SEARCH.equals(intent.getAction()))
+            {
+                String searchQuery = intent.getStringExtra(SearchManager.QUERY);
+                doMySearch(searchQuery);
+            }*/
         }
+
     }
+
+    /*private void doMySearch(String query)
+    {
+        Log.d(LOG_TAG, "Received Search Query from the Intent : " + query);
+    }*/
 
 
     @Override
@@ -51,7 +64,8 @@ public class BookListActivity extends ActionBarActivity
     }
 
 
-    public static class BookListFragment extends Fragment
+
+    public static class BookListFragment extends ListFragment
     {
 
         public BookListFragment()

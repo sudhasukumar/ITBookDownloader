@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.sudha.itbookdownloader" >
 
-    <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="21" />
+    <uses-sdk android:minSdkVersion="19" android:targetSdkVersion="21" />
 
     <!-- This permission is necessary in order for ITBD to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,28 +15,28 @@
 
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+    <application android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:theme="@style/AppTheme" >
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.SEARCH" />
+                <!-- No category needed, because the Intent will specify this class component-->
             </intent-filter>
+            <!-- Points to searchable meta data. -->
+            <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
         </activity>
+
         <activity
-            android:name=".BookListActivity"
+            android:name=".SearchableBookListActivity"
             android:label="@string/title_activity_book_list"
             android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.sudha.itbookdownloader.MainActivity" />
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.sudha.itbookdownloader.MainActivity" />
         </activity>
+
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
