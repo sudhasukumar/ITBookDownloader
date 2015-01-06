@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ITBookDownloader</string>
-    <string name="start_text_title">Enter IT Subject/Book ISBN# to download</string>
-    <string name="action_settings">Settings</string>
-    <string name="search_query_hint">Search IT topic or ISBN#</string>
-    <string name="title_activity_book_list">BookListActivity</string>
+    <string name="app_name">IT Book Downloader</string>
+
+    <string name="start_text_title">Enter IT Subject / Book Name to download</string>
+    <string name="search_query_hint">Search IT topic or Book Name</string>
+
     <string name="search_settings_description">Downloaded IT Books</string>
     <string name="voice_prompt_text">Say an IT Subject or ISBN# to download</string>
 
+
+    <string name="title_activity_book_list">Book List</string>
+
+    <string name="title_activity_book_detail">Book Details</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="book_list_info">
+    "Title": "Java 2 Micro Edition\n"
+    "SubTitle": "Java in Small Things\n"
+    "Image": "http://s.it-ebooks-api.info/5/java_2_micro_edition.jpg\n"
+    "Isbn": "9781930110335\n"
+    </string>
+
+    <string name="book_details_text">
+    "Title": "Java Cookbook, 2nd Edition\n"
+    "SubTitle": "Solutions and Examples for Java Developers\n"
+    "Description": "\nYou have a choice: you can wade your way through lengthy Java tutorials and figure things out by trial and error, or you can pick up Java Cookbook, 2nd Edition and get to the heart of what you need to know when you need to know it.
+                    \nWith the completely revised and thoroughly updated Java Cookbook, 2nd Edition, Java developers like you will learn by example, try out new features, and use sample code to understand how new additions to the language and platform work - and how to put them to work for you.\n"
+    "Author": "Ian F. Darwin\n"
+    "ISBN": "9780596007010\n"
+    "Year": "2004\n"
+    "Page": "864\n"
+    "Publisher": "O'Reilly Media\n"
+    "Image": "http://s.it-ebooks-api.info/3/java_cookbook_2nd_edition.jpg\n"
+    "Download": "http://filepi.com/i/TfhcXwr\n"
+    </string>
 
 </resources>

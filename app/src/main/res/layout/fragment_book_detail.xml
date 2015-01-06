@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                tools:context="com.example.sudha.itbookdownloader.BookDetailActivity.BookDetailsFragment"
+                android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/book_details_fragment_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="15sp"
+    />
+
+</LinearLayout>
+    <!--{
+    "Error": "0",
+    "Time": 0.00055,
+    "ID": 840578312,
+    "Title": "Java Cookbook, 2nd Edition",
+    "SubTitle": "Solutions and Examples for Java Developers",
+    "Description": "You have a choice: you can wade your way through lengthy Java tutorials and figure things out by trial and error,
+                    or you can pick up Java Cookbook, 2nd Edition and get to the heart of what you need to know when you need to know it.
+                    \n\nWith the completely revised and thoroughly updated Java Cookbook, 2nd Edition, Java developers like you will learn by example,
+                    try out new features, and use sample code to understand how new additions to the language and platform work - and how to put them to work for you.",
+    "Author": "Ian F. Darwin",
+    "ISBN": "9780596007010",
+    "Year": "2004",
+    "Page": "864",
+    "Publisher": "O'Reilly Media",
+    "Image": "http://s.it-ebooks-api.info/3/java_cookbook_2nd_edition.jpg",
+    "Download": "http://filepi.com/i/TfhcXwr"
+    }-->

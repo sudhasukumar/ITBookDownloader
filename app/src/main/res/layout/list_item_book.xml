@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/list_item_book_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="20sp"/>
+
+    <!--<TextView
+        android:id="@+id/list_item_book_isbn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:fontFamily="sans-serif-condensed"
+        android:textAppearance="?android:textAppearanceLarge"/>-->
+
+</LinearLayout>
+    <!--{
+    "ID": 1250680761,
+    "Title": "Java 2 Micro Edition",
+    "SubTitle": "Java in Small Things",
+    "Description": "Java2, Micro Edition (J2ME) is a technology defined by many specifications.
+                    These specifications help J2ME address the diverse needs of this wide spectrum of consumer products.
+                    This guide describes the architecture of J2ME and demonstrates the various ...",
+    "Image": "http://s.it-ebooks-api.info/5/java_2_micro_edition.jpg",
+    "isbn": "9781930110335"
+    }-->

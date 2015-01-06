@@ -1,48 +1,38 @@
 package com.example.sudha.itbookdownloader;
 
-
-import android.app.ListFragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
-public class SearchableBookListActivity extends ActionBarActivity
+public class BookDetailActivity extends ActionBarActivity
 {
-    private final String LOG_TAG = SearchableBookListActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_list);
+        setContentView(R.layout.activity_book_detail);
         if (savedInstanceState == null)
         {
-            getFragmentManager().beginTransaction().add(R.id.container, new BookListFragment()).commit();
-            /*Intent intent = getIntent();
-            if (Intent.ACTION_SEARCH.equals(intent.getAction()))
-            {
-                String searchQuery = intent.getStringExtra(SearchManager.QUERY);
-                doMySearch(searchQuery);
-            }*/
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new BookDetailsFragment())
+                    .commit();
         }
-
     }
-
-    /*private void doMySearch(String query)
-    {
-        Log.d(LOG_TAG, "Received Search Query from the Intent : " + query);
-    }*/
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_book_list, menu);
+        getMenuInflater().inflate(R.menu.menu_book_detail, menu);
         return true;
     }
 
@@ -63,12 +53,13 @@ public class SearchableBookListActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-
-    public static class BookListFragment extends ListFragment
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class BookDetailsFragment extends Fragment
     {
 
-        public BookListFragment()
+        public BookDetailsFragment()
         {
         }
 
@@ -76,7 +67,9 @@ public class SearchableBookListActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState)
         {
-            View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_book_detail, container, false);
+            TextView bookDetailsTextView = (TextView) rootView.findViewById(R.id.book_details_fragment_text_view);
+            bookDetailsTextView.setText(R.string.book_details_text);
             return rootView;
         }
     }
