@@ -30,6 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".BookListActivity"
             android:label="@string/title_activity_book_list"
@@ -38,14 +39,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.sudha.itbookdownloader.MainActivity" />
         </activity>
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.sudha.itbookdownloader.MainActivity" />
-        </activity>
+
         <activity
             android:name=".BookDetailActivity"
             android:label="@string/title_activity_book_detail"
@@ -54,6 +48,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.sudha.itbookdownloader.BookListActivity" />
         </activity>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.sudha.itbookdownloader.MainActivity" />
+        </activity>
+
+        <provider   android:authorities="com.example.sudha.itbookdownloader"
+                    android:name=".data.ITBookDownloaderProvider">
+
+        </provider>
     </application>
 
 </manifest>

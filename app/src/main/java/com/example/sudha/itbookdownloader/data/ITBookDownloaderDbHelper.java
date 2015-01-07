@@ -11,6 +11,7 @@ import com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.AuthorEn
  */
 public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
 {
+    private static final String LOG_TAG = ITBookDownloaderDbHelper.class.getName();
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "bookdownloader.db";
     SQLiteDatabase sqLiteDatabase;
