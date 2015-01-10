@@ -24,23 +24,24 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
-        final String SQL_CREATE_BOOKINFO_TABLE = "CREATE TABLE " + BookEntry.TABLE_NAME         + " (" +
-                                                                 BookEntry.COLUMN_BOOK_ID       + " INTEGER PRIMARY KEY," +
-                                                                 BookEntry.COLUMN_TITLE         + " TEXT UNIQUE NOT NULL, " +
-                                                                 BookEntry.COLUMN_SUBTITLE      + " TEXT NOT NULL, " +
-                                                                 BookEntry.COLUMN_DESCRIPTION   + " TEXT NOT NULL, " +
-                                                                 BookEntry.COLUMN_ISBN          + " REAL NOT NULL, " +
-                                                                 BookEntry.COLUMN_IMAGE_LINK    + " TEXT NOT NULL, " +
-                                                    "UNIQUE (" + BookEntry.COLUMN_ISBN          + ") ON CONFLICT IGNORE );";
+        final String SQL_CREATE_BOOKINFO_TABLE = "CREATE TABLE " + BookEntry.TABLE_NAME                     + " (" +
+                                                                 BookEntry.COLUMN_BOOK_ID                   + " INTEGER PRIMARY KEY," +
+                                                                 BookEntry.COLUMN_BOOK_SEARCH_QUERY         + " TEXT NOT NULL," +
+                                                                 BookEntry.COLUMN_TITLE                     + " TEXT UNIQUE NOT NULL, " +
+                                                                 BookEntry.COLUMN_SUBTITLE                  + " TEXT NOT NULL, " +
+                                                                 BookEntry.COLUMN_DESCRIPTION               + " TEXT NOT NULL, " +
+                                                                 BookEntry.COLUMN_ISBN                      + " INTEGER NOT NULL, " +
+                                                                 BookEntry.COLUMN_IMAGE_LINK                + " TEXT NOT NULL, " +
+                                                    "UNIQUE (" + BookEntry.COLUMN_ISBN                      + ") ON CONFLICT IGNORE );";
 
         final String SQL_CREATE_AUTHOR_TABLE = "CREATE TABLE " + AuthorEntry.TABLE_NAME             + " (" +
-                                                                AuthorEntry.COLUMN_BOOK_ID          + " INTEGER PRIMARY KEY " +
+                                                                AuthorEntry.COLUMN_BOOK_ID          + " INTEGER PRIMARY KEY, " +
                                                                 AuthorEntry.COLUMN_AUTHORNAME       + " TEXT NOT NULL, " +
                                                                 AuthorEntry.COLUMN_YEAR             + " INTEGER NOT NULL, " +
                                                                 AuthorEntry.COLUMN_PAGE             + " INTEGER NOT NULL, " +
-                                                                AuthorEntry.COLUMN_PUBLISHER        + " TEXT NOT NULL," +
-                                                                AuthorEntry.COLUMN_DOWNLOAD_LINK    + " TEXT NOT NULL," +
-                                                                AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT " +
+                                                                AuthorEntry.COLUMN_PUBLISHER        + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_DOWNLOAD_LINK    + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT, " +
                                              " FOREIGN KEY (" + AuthorEntry.COLUMN_BOOK_ID          + ") REFERENCES " +
                                              BookEntry.TABLE_NAME + " (" + BookEntry.COLUMN_BOOK_ID + "), " +
                                              " UNIQUE (" + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", " +

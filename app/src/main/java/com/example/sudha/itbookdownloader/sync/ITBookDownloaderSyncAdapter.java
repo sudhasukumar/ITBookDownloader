@@ -12,6 +12,8 @@ import android.os.Bundle;
  */
 public class ITBookDownloaderSyncAdapter extends AbstractThreadedSyncAdapter
 {
+    public final String LOG_TAG = ITBookDownloaderSyncAdapter.class.getSimpleName();
+
     public ITBookDownloaderSyncAdapter(Context context, boolean autoInitialize)
     {
         super(context, autoInitialize);

@@ -1,5 +1,6 @@
 package com.example.sudha.itbookdownloader.data;
 
+import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -27,6 +28,14 @@ public class ITBookDownloaderContract
         public static final String COLUMN_DESCRIPTION = "BookDescription";
         public static final String COLUMN_ISBN = "ISBN";
         public static final String COLUMN_IMAGE_LINK = "Imagelink";
+        public static final String COLUMN_BOOK_SEARCH_QUERY = "BookSearchQuery";
+
+
+        public static Uri buildBookInfoInsertUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+            //return null;
+        }
     }
 
     public static final class AuthorEntry implements BaseColumns
@@ -45,6 +54,10 @@ public class ITBookDownloaderContract
         public static final String COLUMN_FILE_PATHNAME = "FilePathName";
 
 
+        public static Uri buildAuthorInsertUri(long id)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 
 }
