@@ -32,7 +32,7 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
                                                                  BookEntry.COLUMN_DESCRIPTION               + " TEXT NOT NULL, " +
                                                                  BookEntry.COLUMN_ISBN                      + " INTEGER NOT NULL, " +
                                                                  BookEntry.COLUMN_IMAGE_LINK                + " TEXT NOT NULL, " +
-                                                    "UNIQUE (" + BookEntry.COLUMN_ISBN                      + ") ON CONFLICT IGNORE );";
+                                                    "UNIQUE (" + BookEntry.COLUMN_BOOK_ID + ", " + BookEntry.COLUMN_ISBN         + ") ON CONFLICT IGNORE );";
 
         final String SQL_CREATE_AUTHOR_TABLE = "CREATE TABLE " + AuthorEntry.TABLE_NAME             + " (" +
                                                                 AuthorEntry.COLUMN_BOOK_ID          + " INTEGER PRIMARY KEY, " +

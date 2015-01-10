@@ -62,15 +62,7 @@ public class TestDb extends AndroidTestCase
 
         // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.A cursor is your primary interface to the query results.
-        Cursor AuthorCursor = Db.query(
-                AuthorEntry.TABLE_NAME,  // Table to Query
-                null, // all columns
-                null, // Columns for the "where" clause
-                null, // Values for the "where" clause
-                null, // columns to group by
-                null, // columns to filter by row groups
-                null // sort order
-        );
+        Cursor AuthorCursor = Db.query(AuthorEntry.TABLE_NAME,null,null,null,null,null,null);
 
         validateCursor(AuthorCursor, AuthorValues);
 
@@ -95,7 +87,7 @@ public class TestDb extends AndroidTestCase
     {
         // Create a new map of values, where column names are the keys
         ContentValues AuthorValues = new ContentValues();
-        AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, TEST_BOOK_ID);
+        AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, BookId);
         AuthorValues.put(AuthorEntry.COLUMN_AUTHORNAME, "Brett McLaughlin");
         AuthorValues.put(AuthorEntry.COLUMN_YEAR, 2011);
         AuthorValues.put(AuthorEntry.COLUMN_PAGE, 498);

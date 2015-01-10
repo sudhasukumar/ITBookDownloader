@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
 public class ITBookDownloaderContract
 {
     private static final String LOG_TAG = ITBookDownloaderContract.class.getName();
-    public static final String CONTENT_AUTHORITY = "com.example.sudha.itbookdownloader.data";
+    public static final String CONTENT_AUTHORITY = "com.example.sudha.itbookdownloader";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_BOOKINFO = "bookinfo";
     public static final String PATH_AUTHOR = "author";
@@ -35,6 +35,11 @@ public class ITBookDownloaderContract
         {
             return ContentUris.withAppendedId(CONTENT_URI, id);
             //return null;
+        }
+
+        public static Uri buildBookIdUri(long BookId)
+        {
+            return ContentUris.withAppendedId(CONTENT_URI, BookId);
         }
     }
 
