@@ -17,8 +17,7 @@ public class TestDb extends AndroidTestCase
 {
 
     public static final String LOG_TAG = TestDb.class.getSimpleName();
-    static final Long TEST_BOOK_ID = 2279690981L;
-    //static final String TEST_DATE = "20141205";
+    static final long TEST_BOOK_ID = 2279690981L;
 
     public void testCreateDb() throws Throwable
     {
@@ -72,7 +71,7 @@ public class TestDb extends AndroidTestCase
     static ContentValues createBookInfoValues()
     {
         ContentValues BookInfoValues = new ContentValues();
-        BookInfoValues.put(BookEntry.COLUMN_BOOK_ID, TEST_BOOK_ID);
+        BookInfoValues.put(BookEntry.COLUMN_BOOK_ID, TEST_BOOK_ID); //static final long TEST_BOOK_ID = 2279690981L;
         BookInfoValues.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, "PHP & MySQL");
         BookInfoValues.put(BookEntry.COLUMN_TITLE, "PHP & MySQL: The Missing Manual");
         BookInfoValues.put(BookEntry.COLUMN_SUBTITLE, "database-driven websites with PHP and MySQL");
@@ -100,9 +99,7 @@ public class TestDb extends AndroidTestCase
 
     static void validateCursor(Cursor valueCursor, ContentValues expectedValues)
     {
-
         assertTrue(valueCursor.moveToFirst());
-
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet)
         {
@@ -110,7 +107,8 @@ public class TestDb extends AndroidTestCase
             int idx = valueCursor.getColumnIndex(columnName);
             assertFalse(idx == -1);
             String expectedValue = entry.getValue().toString();
-            assertEquals(expectedValue, valueCursor.getString(idx));
+            String cursorValue = valueCursor.getString(idx);
+            assertEquals(expectedValue, cursorValue);
         }
         valueCursor.close();
     }

@@ -4,8 +4,15 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.AuthorEntry;
+import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.BookEntry;
 
 /**
  * Created by Sudha on 1/6/2015.
@@ -16,122 +23,178 @@ public class ITBookDownloaderProvider extends ContentProvider
     private ITBookDownloaderDbHelper DbHelper;
     private static final UriMatcher uriMatcher = buildUriMatcher();
 
-    private static final int BOOK_INFORMATION = 1;          //...../search/{query}.../search/{query}/page/{number}...
-    private static final int AUTHOR_INFORMATION = 4;        //..../book/{id}
+    private static final int INCOMING_BOOK_COLLECTION_URI_INDICATOR = 1;
+    private static final int INCOMING_AUTHOR_COLLECTION_URI_INDICATOR = 2;
+    private static final int INCOMING_SINGLE_AUTHOR_URI_INDICATOR = 3;
+    private static final int INCOMING_SINGLE_BOOK_URI_INDICATOR = 4;
+
+    private static final SQLiteQueryBuilder BookAndAuthorQueryBuilder;
+
+    static
+    {
+        BookAndAuthorQueryBuilder = new SQLiteQueryBuilder();
+        BookAndAuthorQueryBuilder.setTables(BookEntry.TABLE_NAME + " INNER JOIN " + AuthorEntry.TABLE_NAME
+                                            + " ON " + BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = " +
+                                            AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID);
+    }
+
+    private static final String BOOKENTRY_BOOK_ID_SELECTION = BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = ? ";
+    private static final String AUTHORENTRY_BOOK_ID_SELECTION = AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID + " = ? ";
+
+    private Cursor getBookInfoAndAuthor(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+    {
+        Log.d(LOG_TAG, "getBookInfoAndAuthor : ");
+        selection = BOOKENTRY_BOOK_ID_SELECTION;
+        String BookId = BookEntry.getBookIdFromUri(uri);
+        selectionArgs = new String[]{BookId};
+        Cursor tempCursor = BookAndAuthorQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return tempCursor;
+    }
 
     @Override
     public boolean onCreate()
     {
         DbHelper = new ITBookDownloaderDbHelper(getContext());
+        Log.d(LOG_TAG, "onCreate : ");
         return true;
     }
 
     private static UriMatcher buildUriMatcher()
     {
+
+
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        final String authority = ITBookDownloaderContract.CONTENT_AUTHORITY;
-
-        // For each type of URI you want to add, create a corresponding code.
-        uriMatcher.addURI(authority, ITBookDownloaderContract.PATH_BOOKINFO, BOOK_INFORMATION);
-        uriMatcher.addURI(authority, ITBookDownloaderContract.PATH_BOOKINFO + "/*", BOOK_INFORMATION);
-        uriMatcher.addURI(authority, ITBookDownloaderContract.PATH_BOOKINFO + "/*/*", BOOK_INFORMATION);
-        uriMatcher.addURI(authority, ITBookDownloaderContract.PATH_BOOKINFO + "/*/*/*/#", BOOK_INFORMATION);
-        uriMatcher.addURI(authority, ITBookDownloaderContract.PATH_AUTHOR + "/book/#", AUTHOR_INFORMATION);
-
+        uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "books", INCOMING_BOOK_COLLECTION_URI_INDICATOR); // to insert into books table
+        uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "authors", INCOMING_AUTHOR_COLLECTION_URI_INDICATOR); //only to delete all records in the authors table
+        uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "book", INCOMING_SINGLE_AUTHOR_URI_INDICATOR); // only to insert values into Author table
+        uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "book/#", INCOMING_SINGLE_BOOK_URI_INDICATOR); // to query both books and author table for complete book information
+        Log.d(LOG_TAG, "buildUriMatcher : ");
         return uriMatcher;
     }
 
     @Override
     public String getType(Uri uri)
     {
-        // Use the Uri Matcher to determine what kind of URI this is.
-        final int match = uriMatcher.match(uri);
-
-        switch (match)
+        switch (uriMatcher.match(uri))
         {
-            case BOOK_INFORMATION:
-                return ITBookDownloaderContract.BookEntry.CONTENT_TYPE;
-            case AUTHOR_INFORMATION:
-                return ITBookDownloaderContract.AuthorEntry.CONTENT_ITEM_TYPE;
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
+                return BookEntry.CONTENT_TYPE;
+
+            case INCOMING_AUTHOR_COLLECTION_URI_INDICATOR:
+                return AuthorEntry.CONTENT_AUTHORS_TYPE;
+
+            case INCOMING_SINGLE_AUTHOR_URI_INDICATOR:
+                return AuthorEntry.CONTENT_ITEM_TYPE;
+
+            case INCOMING_SINGLE_BOOK_URI_INDICATOR:
+                return BookEntry.CONTENT_ITEM_TYPE;
+
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
+
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Cursor retCursor;
-        switch (uriMatcher.match(uri))
+        Log.d(LOG_TAG, "query : ");
+        final SQLiteDatabase db = DbHelper.getReadableDatabase();
+        final int match = uriMatcher.match(uri);
+        switch (match)
         {
-            // "search/{query}" or "search/{query}/page/{page number}"
-            case BOOK_INFORMATION:
-            {
-                //retCursor = getWeatherByLocationSettingAndDate(uri, projection, sortOrder);
-                retCursor = DbHelper.getReadableDatabase().query(ITBookDownloaderContract.BookEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
+                retCursor = db.query(BookEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
 
-            }
-            // "book/{BookId}"
-            case AUTHOR_INFORMATION:
-            {
-                retCursor = DbHelper.getReadableDatabase().query(ITBookDownloaderContract.AuthorEntry.TABLE_NAME,projection,selection,selectionArgs,null,null,sortOrder);
+            case INCOMING_SINGLE_BOOK_URI_INDICATOR:
+                retCursor = getBookInfoAndAuthor(uri, projection, selection, selectionArgs, sortOrder);
                 break;
-            }
+
             default:
-            throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return retCursor;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values)
     {
+        Log.d(LOG_TAG, "insert : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
-        Uri returnUri;
+        Uri insertedBookUri = uri ;
 
         switch (match)
         {
-            case BOOK_INFORMATION:
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
             {
-                long _id = db.insert(ITBookDownloaderContract.BookEntry.TABLE_NAME, null, values);
+                long _id = db.insert(BookEntry.TABLE_NAME, null, values);
+
                 if (_id > 0)
-                    returnUri = ITBookDownloaderContract.BookEntry.buildBookInfoInsertUri(_id);
+                    insertedBookUri  = BookEntry.buildBookIdUri(_id);
                 else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                    throw new SQLException("Failed to insert row into : " + uri);
                 break;
             }
-            case AUTHOR_INFORMATION:
+
+            case INCOMING_SINGLE_BOOK_URI_INDICATOR:
             {
-                long _id = db.insert(ITBookDownloaderContract.AuthorEntry.TABLE_NAME, null, values);
-                if (_id > 0)
-                    returnUri = ITBookDownloaderContract.AuthorEntry.buildAuthorInsertUri(_id);
-                else
-                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                long _id = 0;
+
+                if (values.getAsString(AuthorEntry.COLUMN_AUTHORNAME)!= null)
+                {
+                    _id = db.insert(AuthorEntry.TABLE_NAME, null, values);
+                    if (_id > 0)
+                        insertedBookUri  = AuthorEntry.buildAuthorBookIdUri(_id);
+                    else
+                        throw new SQLException("Failed to insert row into : " + uri);
+                }
+                else if (values.getAsLong(BookEntry.COLUMN_ISBN)!= null)
+                {
+                    _id = db.insert(BookEntry.TABLE_NAME, null, values);
+                    if (_id > 0)
+                        insertedBookUri  = BookEntry.buildBookIdUri(_id);
+                    else
+                        throw new SQLException("Failed to insert row into : " + uri);
+                }
+
+
                 break;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         getContext().getContentResolver().notifyChange(uri, null);
-        return returnUri;
+        return insertedBookUri ;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs)
     {
+        Log.d(LOG_TAG, "delete : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsDeleted;
         switch (match)
         {
-            case BOOK_INFORMATION:
-                rowsDeleted = db.delete(ITBookDownloaderContract.BookEntry.TABLE_NAME, selection, selectionArgs);
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
+                rowsDeleted = db.delete(BookEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case AUTHOR_INFORMATION:
-                rowsDeleted = db.delete(ITBookDownloaderContract.AuthorEntry.TABLE_NAME, selection, selectionArgs);
+
+            case INCOMING_AUTHOR_COLLECTION_URI_INDICATOR:
+                rowsDeleted = db.delete(AuthorEntry.TABLE_NAME, selection, selectionArgs);
                 break;
+
+            case INCOMING_SINGLE_BOOK_URI_INDICATOR:
+                selection = BOOKENTRY_BOOK_ID_SELECTION;
+                String BookId = BookEntry.getBookIdFromUri(uri);
+                selectionArgs = new String[]{BookId};
+                rowsDeleted = db.delete(BookEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -141,23 +204,26 @@ public class ITBookDownloaderProvider extends ContentProvider
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
-        //return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
+        Log.d(LOG_TAG, "update : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsUpdated;
 
         switch (match)
         {
-            case BOOK_INFORMATION:
-                rowsUpdated = db.update(ITBookDownloaderContract.BookEntry.TABLE_NAME, values, selection, selectionArgs);
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
+                rowsUpdated = db.update(BookEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
-            case AUTHOR_INFORMATION:
-                rowsUpdated = db.update(ITBookDownloaderContract.AuthorEntry.TABLE_NAME, values, selection, selectionArgs);
+            case INCOMING_SINGLE_BOOK_URI_INDICATOR:
+                selection = AUTHORENTRY_BOOK_ID_SELECTION;
+                String BookId = AuthorEntry.getBookIdFromUri(uri);
+                selectionArgs = new String[]{BookId};
+                rowsUpdated = db.update(AuthorEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -170,20 +236,21 @@ public class ITBookDownloaderProvider extends ContentProvider
     }
 
     @Override
-    public int bulkInsert(Uri uri, ContentValues[] values)
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values)
     {
+        Log.d(LOG_TAG, "bulkInsert : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match)
         {
-            case BOOK_INFORMATION:
+            case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
                 db.beginTransaction();
                 int returnCount = 0;
                 try
                 {
                     for (ContentValues value : values)
                     {
-                        long _id = db.insert(ITBookDownloaderContract.BookEntry.TABLE_NAME, null, value);
+                        long _id = db.insert(BookEntry.TABLE_NAME, null, value);
                         if (_id != -1)
                         {
                             returnCount++;
@@ -201,4 +268,6 @@ public class ITBookDownloaderProvider extends ContentProvider
                 return super.bulkInsert(uri, values);
         }
     }
+
+
 }

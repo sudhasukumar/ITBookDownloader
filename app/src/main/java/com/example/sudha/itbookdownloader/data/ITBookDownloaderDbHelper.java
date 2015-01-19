@@ -25,14 +25,14 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         final String SQL_CREATE_BOOKINFO_TABLE = "CREATE TABLE " + BookEntry.TABLE_NAME                     + " (" +
-                                                                 BookEntry.COLUMN_BOOK_ID                   + " INTEGER PRIMARY KEY," +
-                                                                 BookEntry.COLUMN_BOOK_SEARCH_QUERY         + " TEXT NOT NULL," +
-                                                                 BookEntry.COLUMN_TITLE                     + " TEXT UNIQUE NOT NULL, " +
-                                                                 BookEntry.COLUMN_SUBTITLE                  + " TEXT NOT NULL, " +
-                                                                 BookEntry.COLUMN_DESCRIPTION               + " TEXT NOT NULL, " +
-                                                                 BookEntry.COLUMN_ISBN                      + " INTEGER NOT NULL, " +
-                                                                 BookEntry.COLUMN_IMAGE_LINK                + " TEXT NOT NULL, " +
-                                                    "UNIQUE (" + BookEntry.COLUMN_BOOK_ID + ", " + BookEntry.COLUMN_ISBN         + ") ON CONFLICT IGNORE );";
+                                                                 BookEntry.COLUMN_BOOK_ID                   + " INTEGER PRIMARY KEY ," +
+                                                                 BookEntry.COLUMN_BOOK_SEARCH_QUERY         + " TEXT NOT NULL ," +
+                                                                 BookEntry.COLUMN_TITLE                     + " TEXT UNIQUE NOT NULL , " +
+                                                                 BookEntry.COLUMN_SUBTITLE                  + " TEXT NOT NULL , " +
+                                                                 BookEntry.COLUMN_DESCRIPTION               + " TEXT NOT NULL , " +
+                                                                 BookEntry.COLUMN_ISBN                      + " INTEGER NOT NULL , " +
+                                                                 BookEntry.COLUMN_IMAGE_LINK                + " TEXT NOT NULL , " +
+                                                    " UNIQUE (" + BookEntry.COLUMN_BOOK_ID + ", " + BookEntry.COLUMN_ISBN         + ") ON CONFLICT REPLACE );";
 
         final String SQL_CREATE_AUTHOR_TABLE = "CREATE TABLE " + AuthorEntry.TABLE_NAME             + " (" +
                                                                 AuthorEntry.COLUMN_BOOK_ID          + " INTEGER PRIMARY KEY, " +
@@ -42,10 +42,8 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
                                                                 AuthorEntry.COLUMN_PUBLISHER        + " TEXT NOT NULL, " +
                                                                 AuthorEntry.COLUMN_DOWNLOAD_LINK    + " TEXT NOT NULL, " +
                                                                 AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT, " +
-                                             " FOREIGN KEY (" + AuthorEntry.COLUMN_BOOK_ID          + ") REFERENCES " +
-                                             BookEntry.TABLE_NAME + " (" + BookEntry.COLUMN_BOOK_ID + "), " +
-                                             " UNIQUE (" + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", " +
-                                             AuthorEntry.COLUMN_FILE_PATHNAME + ") ON CONFLICT REPLACE);";
+                     " FOREIGN KEY (" + AuthorEntry.COLUMN_BOOK_ID          + ") REFERENCES " + BookEntry.TABLE_NAME + " (" + BookEntry.COLUMN_BOOK_ID + ") ON DELETE CASCADE , " +
+                     " UNIQUE (" + AuthorEntry.COLUMN_BOOK_ID + ", " + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", "  + AuthorEntry.COLUMN_FILE_PATHNAME + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_BOOKINFO_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_AUTHOR_TABLE);
@@ -57,5 +55,13 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + BookEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + AuthorEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
+    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db)
+    {
+        //to turn on the foreign key constraints
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
     }
 }
