@@ -59,7 +59,9 @@
         </activity>
 
         <provider   android:authorities="com.example.sudha.itbookdownloader"
-                    android:name=".data.ITBookDownloaderProvider">
+                    android:name=".data.ITBookDownloaderProvider"
+                    android:exported="false"
+                    android:syncable="true" >
 
         </provider>
     </application>

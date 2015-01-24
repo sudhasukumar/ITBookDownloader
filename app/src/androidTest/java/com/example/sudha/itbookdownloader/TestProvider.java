@@ -119,9 +119,28 @@ public class TestProvider extends AndroidTestCase
         Log.d(LOG_TAG, "Querying BulkInsert Count works");
 
     }
+
+    public void testFetchBooksWithUserSearchQuery()
+    {
+        testADeleteAllRecords(); //to freshly install some new data in the DB.
+        ContentValues TestBookInfoValues = TestDb.createBookInfoValues();
+
+        Uri BookInfoUri = mContext.getContentResolver().insert(BookEntry.BOOKS_CONTENT_URI, TestBookInfoValues);
+        long BookInfoBookId = ContentUris.parseId(BookInfoUri);
+        assertEquals(BookInfoBookId,TestDb.TEST_BOOK_ID);
+        Log.d(LOG_TAG, "Books Insert works");
+
+        Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.buildBookSearchUriForSearchQuery("PHP"),null,null,null,null);
+        TestDb.validateCursor(BooksCursor, TestBookInfoValues);
+        Log.d(LOG_TAG, "Querying Books with Search Query value works");
+
+    }
     public void testGetType()
     {
         String type = mContext.getContentResolver().getType(BookEntry.BOOKS_CONTENT_URI);               //content://com.example.sudha.ITBookDownloader/books
+        assertEquals(BookEntry.CONTENT_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
+
+        type = mContext.getContentResolver().getType(BookEntry.buildBookSearchUriForSearchQuery("Android"));               //content://com.example.sudha.ITBookDownloader/search/{android}
         assertEquals(BookEntry.CONTENT_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
 
         type = mContext.getContentResolver().getType(AuthorEntry.AUTHORS_CONTENT_URI);                  //content://com.example.sudha.ITBookDownloader/authors

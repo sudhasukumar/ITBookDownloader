@@ -9,9 +9,9 @@
                 tools:context="com.example.sudha.itbookdownloader.BookListActivity$BookListFragment">
 
     <ListView
-        android:id="@+id/fragment_book_listview"
+        android:id="@+id/listview_book_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+    />
 
 </LinearLayout>

@@ -104,6 +104,9 @@ public class TestDb extends AndroidTestCase
         for (Map.Entry<String, Object> entry : valueSet)
         {
             String columnName = entry.getKey();
+            if (columnName.equals("BookId")) //This check is for Cursor fetching BookId as _id for the sake of CursorAdaptors
+                columnName = "_id";
+
             int idx = valueCursor.getColumnIndex(columnName);
             assertFalse(idx == -1);
             String expectedValue = entry.getValue().toString();

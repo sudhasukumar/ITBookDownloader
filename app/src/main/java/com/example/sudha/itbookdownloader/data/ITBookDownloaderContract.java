@@ -13,12 +13,15 @@ public class ITBookDownloaderContract
     public static final String CONTENT_AUTHORITY = "com.example.sudha.itbookdownloader";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
     public static final String PATH_BOOKS = "books";
+    public static final String PATH_SEARCH = "search";
     public static final String PATH_BOOK = "book";
     public static final String PATH_AUTHORS = "authors";
+
 
     public static final class BookEntry implements BaseColumns
     {
         public static final Uri BOOKS_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BOOKS).build();
+        public static final Uri BOOKS_SEARCH_CONTENT_URI = BOOKS_CONTENT_URI.buildUpon().appendPath(PATH_SEARCH).build();
         public static final Uri BOOK_ID_CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BOOK).build();
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + PATH_BOOKS;
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + PATH_BOOK;
@@ -40,6 +43,21 @@ public class ITBookDownloaderContract
         public static String getBookIdFromUri(Uri uri)
         {
             return String.valueOf(ContentUris.parseId(uri));
+        }
+
+        public static Uri buildBookSearchUri()
+        {
+            return BookEntry.BOOKS_CONTENT_URI; //content://com.example.sudha.itbookdownloader/books
+        }
+
+        public static Uri buildBookSearchUriForSearchQuery(String SearchQuery)
+        {
+            return BookEntry.BOOKS_SEARCH_CONTENT_URI.buildUpon().appendPath(SearchQuery).build(); //content://com.example.sudha.itbookdownloader/books/search/{android}
+        }
+
+        public static String getBookSearchQueryFromUri(Uri uri)
+        {
+            return uri.getLastPathSegment();
         }
     }
 

@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.HashMap;
+
 import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.AuthorEntry;
 import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.BookEntry;
 
@@ -20,6 +22,7 @@ import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.B
 public class ITBookDownloaderProvider extends ContentProvider
 {
     private static final String LOG_TAG = ITBookDownloaderProvider.class.getName();
+
     private ITBookDownloaderDbHelper DbHelper;
     private static final UriMatcher uriMatcher = buildUriMatcher();
 
@@ -27,8 +30,14 @@ public class ITBookDownloaderProvider extends ContentProvider
     private static final int INCOMING_AUTHOR_COLLECTION_URI_INDICATOR = 2;
     private static final int INCOMING_SINGLE_AUTHOR_URI_INDICATOR = 3;
     private static final int INCOMING_SINGLE_BOOK_URI_INDICATOR = 4;
+    private static final int INCOMING_BOOK_SEARCH_COLLECTION_URI_INDICATOR = 5;
 
     private static final SQLiteQueryBuilder BookAndAuthorQueryBuilder;
+    private static final SQLiteQueryBuilder BookSearchQueryBuilder;
+
+    private static final HashMap<String,String> ITBDBookSearchProjectionMap = new HashMap<>();
+
+    private static final HashMap<String,String> ITBDSingleBookDetailsProjectionMap = new HashMap<>();
 
     static
     {
@@ -36,10 +45,49 @@ public class ITBookDownloaderProvider extends ContentProvider
         BookAndAuthorQueryBuilder.setTables(BookEntry.TABLE_NAME + " INNER JOIN " + AuthorEntry.TABLE_NAME
                                             + " ON " + BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = " +
                                             AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID);
+
+
+        BookSearchQueryBuilder = new SQLiteQueryBuilder();
+        BookSearchQueryBuilder.setTables(BookEntry.TABLE_NAME);
+        BookSearchQueryBuilder.setProjectionMap(ITBDBookSearchProjectionMap);
+
+
+
+        ITBDBookSearchProjectionMap.put(    BookEntry._ID ,                     BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_TITLE,             BookEntry.COLUMN_TITLE);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_SUBTITLE,          BookEntry.COLUMN_SUBTITLE);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_DESCRIPTION,       BookEntry.COLUMN_DESCRIPTION);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_ISBN,              BookEntry.COLUMN_ISBN);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_IMAGE_LINK,        BookEntry.COLUMN_IMAGE_LINK);
+        ITBDBookSearchProjectionMap.put(    BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY );
+
+
+
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry._ID ,                     BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_TITLE,             BookEntry.COLUMN_TITLE);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_SUBTITLE,          BookEntry.COLUMN_SUBTITLE);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_DESCRIPTION,       BookEntry.COLUMN_DESCRIPTION);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_ISBN,              BookEntry.COLUMN_ISBN);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_IMAGE_LINK,        BookEntry.COLUMN_IMAGE_LINK);
+        ITBDSingleBookDetailsProjectionMap.put(    BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY );
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_AUTHORNAME,      AuthorEntry.COLUMN_AUTHORNAME);
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_YEAR,            AuthorEntry.COLUMN_YEAR);
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_PAGE,            AuthorEntry.COLUMN_PAGE);
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_PUBLISHER,       AuthorEntry.COLUMN_PUBLISHER);
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_DOWNLOAD_LINK,   AuthorEntry.COLUMN_DOWNLOAD_LINK);
+        ITBDSingleBookDetailsProjectionMap.put(    AuthorEntry.COLUMN_FILE_PATHNAME,   AuthorEntry.COLUMN_FILE_PATHNAME);
+
     }
 
     private static final String BOOKENTRY_BOOK_ID_SELECTION = BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = ? ";
     private static final String AUTHORENTRY_BOOK_ID_SELECTION = AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID + " = ? ";
+    private static final String BOOKENTRY_SEARCH_QUERY_SELECTION = BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_SEARCH_QUERY + " LIKE ? ";
+
+    private Cursor getBookCollection(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+    {
+        Log.d(LOG_TAG, "getBookCollection : ");
+        return BookSearchQueryBuilder.query(DbHelper.getReadableDatabase(), projection,selection,selectionArgs,null,null,sortOrder);
+    }
 
     private Cursor getBookInfoAndAuthor(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
@@ -47,8 +95,18 @@ public class ITBookDownloaderProvider extends ContentProvider
         selection = BOOKENTRY_BOOK_ID_SELECTION;
         String BookId = BookEntry.getBookIdFromUri(uri);
         selectionArgs = new String[]{BookId};
-        Cursor tempCursor = BookAndAuthorQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
-        return tempCursor;
+        BookAndAuthorQueryBuilder.setProjectionMap(ITBDSingleBookDetailsProjectionMap);
+        return BookAndAuthorQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+    }
+
+    private Cursor getBookCollectionForSearchQuery(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
+    {
+        Log.d(LOG_TAG, "getBookCollectionForSearchQuery : ");
+        selection = BOOKENTRY_SEARCH_QUERY_SELECTION;
+        String SearchQuery = BookEntry.getBookSearchQueryFromUri(uri);
+        selectionArgs = new String[]{"%"+SearchQuery+"%"};
+        return BookSearchQueryBuilder.query(DbHelper.getReadableDatabase(), projection,selection,selectionArgs,null,null,sortOrder);
+        //return DbHelper.getReadableDatabase().query(BookEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     @Override
@@ -61,10 +119,9 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     private static UriMatcher buildUriMatcher()
     {
-
-
         final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "books", INCOMING_BOOK_COLLECTION_URI_INDICATOR); // to insert into books table
+        uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "/books/search/*", INCOMING_BOOK_SEARCH_COLLECTION_URI_INDICATOR); // to query into books table that match searchQuery String
         uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "authors", INCOMING_AUTHOR_COLLECTION_URI_INDICATOR); //only to delete all records in the authors table
         uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "book", INCOMING_SINGLE_AUTHOR_URI_INDICATOR); // only to insert values into Author table
         uriMatcher.addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "book/#", INCOMING_SINGLE_BOOK_URI_INDICATOR); // to query both books and author table for complete book information
@@ -78,6 +135,9 @@ public class ITBookDownloaderProvider extends ContentProvider
         switch (uriMatcher.match(uri))
         {
             case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
+                return BookEntry.CONTENT_TYPE;
+
+            case INCOMING_BOOK_SEARCH_COLLECTION_URI_INDICATOR:
                 return BookEntry.CONTENT_TYPE;
 
             case INCOMING_AUTHOR_COLLECTION_URI_INDICATOR:
@@ -104,7 +164,11 @@ public class ITBookDownloaderProvider extends ContentProvider
         switch (match)
         {
             case INCOMING_BOOK_COLLECTION_URI_INDICATOR:
-                retCursor = db.query(BookEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+                retCursor = getBookCollection(uri, projection, selection, selectionArgs, sortOrder);
+                break;
+
+            case INCOMING_BOOK_SEARCH_COLLECTION_URI_INDICATOR:
+                retCursor = getBookCollectionForSearchQuery(uri, projection, selection, selectionArgs, sortOrder);
                 break;
 
             case INCOMING_SINGLE_BOOK_URI_INDICATOR:
@@ -118,6 +182,9 @@ public class ITBookDownloaderProvider extends ContentProvider
 
         return retCursor;
     }
+
+
+
 
     @Override
     public Uri insert(Uri uri, ContentValues values)

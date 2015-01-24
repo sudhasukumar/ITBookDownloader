@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 public class BookDetailActivity extends ActionBarActivity
 {
+    public static final String BOOK_ID = "BookId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
