@@ -5,8 +5,9 @@
               android:layout_height="wrap_content"
               android:minHeight="?android:attr/listPreferredItemHeight"
               android:background="@drawable/touch_selector">
+
     <FrameLayout
-        android:layout_width="100dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -23,12 +24,14 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="7"
                   android:layout_gravity="center">
+
         <TextView
             android:id="@+id/list_item_book_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceLarge"/>
+
         <TextView
             android:id="@+id/list_item_book_subtitle_textview"
             android:layout_width="wrap_content"

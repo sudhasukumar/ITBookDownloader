@@ -21,7 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.sudha.itbookdownloader.sync.ITBookDownloaderSyncAdapter;
+import com.example.sudha.itbookdownloader.sync.ITBDSyncAdapter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +32,7 @@ import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.B
 public class BookListActivity extends ActionBarActivity
 {
     private final String LOG_TAG = BookListActivity.class.getSimpleName();
+    private static String searchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,7 +46,7 @@ public class BookListActivity extends ActionBarActivity
             if (Intent.ACTION_SEARCH.equals(intent.getAction()))
             {
                 Bundle bundle = intent.getExtras();
-                String searchQuery = bundle.getString("searchquery");
+                searchQuery = bundle.getString("searchquery");
                 Log.d(LOG_TAG, "Received Search Query from the Intent : " + searchQuery);
                 passSearchToSyncAdapter(searchQuery);
                 bookListFragment.setArguments(bundle); //passing the search query in bundle to fragment to process
@@ -61,7 +62,7 @@ public class BookListActivity extends ActionBarActivity
     private void passSearchToSyncAdapter(String query)
     {
         Log.d(LOG_TAG, "passSearchToSyncAdapter : " + query);
-        ITBookDownloaderSyncAdapter.syncImmediately(this);
+        ITBDSyncAdapter.syncImmediately(this);
     }
 
 
@@ -77,12 +78,10 @@ public class BookListActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-
         if (id == R.id.action_settings)
         {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

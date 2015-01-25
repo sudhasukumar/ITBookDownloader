@@ -9,12 +9,15 @@
     <string name="search_settings_description">Downloaded IT Books</string>
     <string name="voice_prompt_text">Say an IT Subject or ISBN# to download</string>
 
-
+    <!-- Activity Titles -->
     <string name="title_activity_book_list">Book List</string>
-
     <string name="title_activity_book_detail">Book Details</string>
-
     <string name="action_settings">Settings</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">sudha.example.com</string>
+    <string name="content_authority">com.example.sudha.itbookdownloader</string>
+
 
     <string name="book_list_info">
     "Title": "Java 2 Micro Edition\n"

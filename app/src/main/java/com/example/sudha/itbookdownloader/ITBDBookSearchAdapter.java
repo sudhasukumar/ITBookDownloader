@@ -91,6 +91,7 @@ public class ITBDBookSearchAdapter extends CursorAdapter
         String Title = cursor.getString(BookListActivity.BookListFragment.COL_TITLE);
         viewHolder.TitleView.setText(Title);
 
+        viewHolder.ImageView.setContentDescription(Title);
 
         String Subtitle = cursor.getString(BookListActivity.BookListFragment.COL_SUBTITLE);
         viewHolder.SubTitleView.setText(Subtitle);
