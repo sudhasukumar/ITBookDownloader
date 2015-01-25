@@ -29,4 +29,9 @@ public class ITBookDownloaderSyncAdapter extends AbstractThreadedSyncAdapter
     {
 
     }
+
+    public static void syncImmediately(Context context)
+    {
+
+    }
 }
