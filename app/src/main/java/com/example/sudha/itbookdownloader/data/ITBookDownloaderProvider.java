@@ -101,10 +101,10 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     private Cursor getBookCollectionForSearchQuery(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
-        Log.d(LOG_TAG, "getBookCollectionForSearchQuery : ");
         selection = BOOKENTRY_SEARCH_QUERY_SELECTION;
         String SearchQuery = BookEntry.getBookSearchQueryFromUri(uri);
         selectionArgs = new String[]{"%"+SearchQuery+"%"};
+        Log.d(LOG_TAG, "getBookCollectionForSearchQuery : " + SearchQuery);
         return BookSearchQueryBuilder.query(DbHelper.getReadableDatabase(), projection,selection,selectionArgs,null,null,sortOrder);
         //return DbHelper.getReadableDatabase().query(BookEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
     }

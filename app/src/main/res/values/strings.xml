@@ -5,6 +5,7 @@
 
     <string name="start_text_title">Enter IT Subject / Book Name to download</string>
     <string name="search_query_hint">Search IT topic or Book Name</string>
+    <string name="private_use_message">Reproduction of site books is authorized only for informative purposes and strictly for personal, private use.</string>
 
     <string name="search_settings_description">Downloaded IT Books</string>
     <string name="voice_prompt_text">Say an IT Subject or ISBN# to download</string>
@@ -17,6 +18,15 @@
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sudha.example.com</string>
     <string name="content_authority">com.example.sudha.itbookdownloader</string>
+
+    <!-- Network Api call URLs -->
+    <string name="api_book_id">http://it-ebooks-api.info/v1/book</string>
+    <string name="api_book_search">http://it-ebooks-api.info/v1/search/</string>
+
+    <string name="book_id_label">BookId</string>
+    <string name="search_query_label">SearchQuery</string>
+
+    <string name="search_query_string_default">Android</string>
 
 
     <string name="book_list_info">
@@ -39,5 +49,7 @@
     "Image": "http://s.it-ebooks-api.info/3/java_cookbook_2nd_edition.jpg\n"
     "Download": "http://filepi.com/i/TfhcXwr\n"
     </string>
+    <string name="book_id_default">0</string>
+
 
 </resources>

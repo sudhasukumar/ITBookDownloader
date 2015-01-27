@@ -33,7 +33,8 @@ public class StartSearchListener implements SearchView.OnQueryTextListener // Se
         //Intent searchQueryIntent = new Intent(Intent.ACTION_SEARCH);
         Intent searchQueryIntent = new Intent(searchContext,BookListActivity.class);
         searchQueryIntent.setAction(Intent.ACTION_SEARCH);
-        searchQueryIntent.putExtra("searchquery",query);
+        String searchQueryLabel = searchContext.getString(R.string.search_query_label);
+        searchQueryIntent.putExtra(searchQueryLabel,query);
         searchContext.startActivity(searchQueryIntent);
         return true;
     }

@@ -55,7 +55,6 @@ public class TestProvider extends AndroidTestCase
         TestDb.validateCursor(BooksCursor, TestBookInfoValues);
         Log.d(LOG_TAG, "Querying Books Inserted values works");
 
-        // Fantastic.  Now that we have a Book Info, add some Author!
         ContentValues AuthorValues = TestDb.createAuthorValues(TestDb.TEST_BOOK_ID);
 
         Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorBookIdUri(TestDb.TEST_BOOK_ID), AuthorValues);
@@ -196,7 +195,7 @@ public class TestProvider extends AndroidTestCase
         return AuthorValues;
     }
 
-    // Inserts both the location and weather data for the Kalamazoo data set.
+
     protected ContentValues insertBookInfoAndAuthorData()
     {
         ContentValues BookInfoValues = createBookInfoValues();

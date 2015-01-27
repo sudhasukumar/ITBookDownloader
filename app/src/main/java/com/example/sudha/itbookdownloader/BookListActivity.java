@@ -40,31 +40,27 @@ public class BookListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
         BookListFragment bookListFragment = new BookListFragment();
+        Bundle bundle;
         if (savedInstanceState == null)
         {
             Intent intent = getIntent();
             if (Intent.ACTION_SEARCH.equals(intent.getAction()))
             {
-                Bundle bundle = intent.getExtras();
-                searchQuery = bundle.getString("searchquery");
+                bundle = intent.getExtras();
+                String SearchQueryLabel = getString(R.string.search_query_label);
+                searchQuery = bundle.getString(SearchQueryLabel);
                 Log.d(LOG_TAG, "Received Search Query from the Intent : " + searchQuery);
-                passSearchToSyncAdapter(searchQuery);
                 bookListFragment.setArguments(bundle); //passing the search query in bundle to fragment to process
             }
 
             FragmentTransaction bookListFragmentTransaction = getFragmentManager().beginTransaction();
             bookListFragmentTransaction.add(R.id.book_list_activity, bookListFragment);
             bookListFragmentTransaction.commit();
+            ITBDSyncAdapter.initializeSyncAdapter(this);
+            ITBDSyncAdapter.syncImmediately(this,searchQuery,null);
         }
 
     }
-
-    private void passSearchToSyncAdapter(String query)
-    {
-        Log.d(LOG_TAG, "passSearchToSyncAdapter : " + query);
-        ITBDSyncAdapter.syncImmediately(this);
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -78,8 +74,8 @@ public class BookListActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-        if (id == R.id.action_settings)
-        {
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -134,7 +130,7 @@ public class BookListActivity extends ActionBarActivity
             super.onResume();
             if ((USER_BOOK_SEARCH_QUERY != null) && (USER_BOOK_SEARCH_QUERY.equals(DEFAULT_SEARCH_QUERY))) //&& !mLocation.equals(Utility.getPreferredLocation(getActivity())))
             {
-                USER_BOOK_SEARCH_QUERY = getArguments().getString("searchquery");
+                USER_BOOK_SEARCH_QUERY = getArguments().getString(getString(R.string.search_query_label));
                 getLoaderManager().restartLoader(BOOK_SEARCH_LOADER, null, this);
             }
         }

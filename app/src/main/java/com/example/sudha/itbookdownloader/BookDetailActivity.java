@@ -1,5 +1,6 @@
 package com.example.sudha.itbookdownloader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -40,17 +41,11 @@ public class BookDetailActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
+        if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -70,7 +65,7 @@ public class BookDetailActivity extends ActionBarActivity
         {
             View rootView = inflater.inflate(R.layout.fragment_book_detail, container, false);
             TextView bookDetailsTextView = (TextView) rootView.findViewById(R.id.book_details_fragment_text_view);
-            bookDetailsTextView.setText(R.string.book_details_text);
+            //bookDetailsTextView.setText(R.string.book_details_text);
             return rootView;
         }
     }
