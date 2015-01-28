@@ -3,5 +3,6 @@
 
     <color name="ITBD_light_orange">#FFFCCAC7</color>
     <color name="ITBD_orange">#FFFCB0AC</color>
+    <color name="black">#00000000</color>
 
 </resources>

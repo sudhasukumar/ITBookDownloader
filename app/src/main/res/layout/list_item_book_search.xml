@@ -2,19 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="120dp"
               android:minHeight="?android:attr/listPreferredItemHeight"
               android:background="@drawable/touch_selector">
 
     <FrameLayout
-        android:layout_width="60dp"
-        android:layout_height="wrap_content">
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        >
 
         <ImageView
             android:id="@+id/list_item_book_image_view"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/image_view_content_description_label"/>
 
     </FrameLayout>
 
@@ -23,7 +26,8 @@
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
                   android:layout_weight="7"
-                  android:layout_gravity="center">
+                  android:layout_gravity="end">
+
 
         <TextView
             android:id="@+id/list_item_book_title_textview"
@@ -39,12 +43,27 @@
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceSmall"/>
 
-        <TextView
-            android:id="@+id/list_item_book_ISBN_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceSmall"/>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                      android:orientation="horizontal"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="end">
+                        <TextView
+                            android:id="@+id/list_item_book_ISBN_textview_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/text_view_isbn_label"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textAppearance="?android:textAppearanceSmall"
+                        />
+                        <TextView
+                            android:id="@+id/list_item_book_ISBN_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-condensed"
+                            android:textAppearance="?android:textAppearanceSmall"
+                        />
+        </LinearLayout>
 
     </LinearLayout>
 

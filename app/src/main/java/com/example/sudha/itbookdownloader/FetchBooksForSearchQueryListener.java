@@ -8,5 +8,5 @@ import java.util.List;
  */
 public interface FetchBooksForSearchQueryListener
 {
-    void onFetchBooksForSearchQuery(List<HashMap<String, String>> ArrayListOfStrings);
+    void onFetchBooksForSearchQuery(String ArrayListOfStrings);
 }

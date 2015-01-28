@@ -158,7 +158,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Cursor retCursor;
-        Log.d(LOG_TAG, "query : ");
+        Log.d(LOG_TAG, "ITBookDownloaderProvider query method : ");
         final SQLiteDatabase db = DbHelper.getReadableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match)

@@ -3,6 +3,7 @@
 
     <string name="app_name">IT Book Downloader</string>
 
+    <!--MainActivity-->
     <string name="start_text_title">Enter IT Subject / Book Name to download</string>
     <string name="search_query_hint">Search IT topic or Book Name</string>
     <string name="private_use_message">Reproduction of site books is authorized only for informative purposes and strictly for personal, private use.</string>
@@ -23,33 +24,21 @@
     <string name="api_book_id">http://it-ebooks-api.info/v1/book</string>
     <string name="api_book_search">http://it-ebooks-api.info/v1/search/</string>
 
+    <!--BookListActivity-->
     <string name="book_id_label">BookId</string>
     <string name="search_query_label">SearchQuery</string>
 
+    <!--FetchBooksForSearchQueryTask-->
     <string name="search_query_string_default">Android</string>
-
-
-    <string name="book_list_info">
-    "Title": "Java 2 Micro Edition\n"
-    "SubTitle": "Java in Small Things\n"
-    "Image": "http://s.it-ebooks-api.info/5/java_2_micro_edition.jpg\n"
-    "Isbn": "9781930110335\n"
-    </string>
-
-    <string name="book_details_text">
-    "Title": "Java Cookbook, 2nd Edition\n"
-    "SubTitle": "Solutions and Examples for Java Developers\n"
-    "Description": "\nYou have a choice: you can wade your way through lengthy Java tutorials and figure things out by trial and error, or you can pick up Java Cookbook, 2nd Edition and get to the heart of what you need to know when you need to know it.
-                    \nWith the completely revised and thoroughly updated Java Cookbook, 2nd Edition, Java developers like you will learn by example, try out new features, and use sample code to understand how new additions to the language and platform work - and how to put them to work for you.\n"
-    "Author": "Ian F. Darwin\n"
-    "ISBN": "9780596007010\n"
-    "Year": "2004\n"
-    "Page": "864\n"
-    "Publisher": "O'Reilly Media\n"
-    "Image": "http://s.it-ebooks-api.info/3/java_cookbook_2nd_edition.jpg\n"
-    "Download": "http://filepi.com/i/TfhcXwr\n"
-    </string>
     <string name="book_id_default">0</string>
 
+    <!--fragment_book_detail.xml-->
+    <string name="image_view_content_description_label">Book Image</string>
+    <string name="text_view_isbn_label">ISBN :</string>
+    <string name="text_view_author_label">Author :</string>
+    <string name="text_view_year_label">Year :</string>
+    <string name="text_view_page_label">Page :</string>
+    <string name="text_view_publisher_label">Publisher :</string>
+    <string name="text_view_description_label">Description :</string>
 
 </resources>
