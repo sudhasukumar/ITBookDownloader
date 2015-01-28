@@ -11,6 +11,7 @@
       <w>doesnt</w>
       <w>downloadlink</w>
       <w>ebooks</w>
+      <w>hashtag</w>
       <w>hdpi</w>
       <w>imagelink</w>
       <w>itbd</w>
@@ -18,6 +19,7 @@
       <w>itbookdownloader</w>
       <w>laughlin</w>
       <w>searchquery</w>
+      <w>textview</w>
     </words>
   </dictionary>
 </component>

@@ -72,12 +72,13 @@ public class BookListActivity extends ActionBarActivity
             BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
             bookDetailsFragment.setArguments(args);
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.book_detail_activity, bookDetailsFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.book_detail_activity, bookDetailsFragment).commit();
         }
         else
         {
-            Intent intent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
-            startActivity(intent);
+            Intent ViewBookDetailIntent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
+            ViewBookDetailIntent.setAction(Intent.ACTION_VIEW);
+            startActivity(ViewBookDetailIntent);
         }
     }
 
@@ -104,8 +105,8 @@ public class BookListActivity extends ActionBarActivity
     public static class BookListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchBooksForSearchQueryListener
     {
         public static final String LOG_TAG = BookListFragment.class.getSimpleName();
-        private ITBDBookSearchAdapter itbdBookSearchAdapter;
-        private ListView book_listview;
+        private ITBDBookSearchAdapter mITBDBookSearchAdapter;
+        private ListView BookListView;
         private int USER_LIST_VIEW_POSITION = ListView.INVALID_POSITION;
         private boolean isHighlightedBookLayout;
         private static final String USER_LIST_VIEW_POSITION_LABEL = "user_selected_position";
@@ -133,11 +134,6 @@ public class BookListActivity extends ActionBarActivity
         {
             setHasOptionsMenu(true);
         }
-
-        /*public interface Callback
-        {
-            public void onItemSelected();
-        }*/
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState)
@@ -181,42 +177,37 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            itbdBookSearchAdapter = new ITBDBookSearchAdapter(getActivity(), null, 0);
+            mITBDBookSearchAdapter = new ITBDBookSearchAdapter(getActivity(), null, 0);
             View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
-            book_listview = (ListView) rootView.findViewById(R.id.listview_book_search);
+            BookListView = (ListView) rootView.findViewById(R.id.listview_book_search);
             updateSearchBookList(SearchQuery, BookId);
-            book_listview.setAdapter(itbdBookSearchAdapter);
-            book_listview.setClickable(true);
-            book_listview.setOnItemClickListener(
-                                                            new AdapterView.OnItemClickListener()
-                                                    {
-                                                            @Override
-                                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                                                            {
-                                                                Cursor cursor = itbdBookSearchAdapter.getCursor();
-                                                                BookId = cursor.getString(COL_ID);
-                                                                if (cursor.moveToPosition(position))
-                                                                {
-                                                                    Activity myBookListActivity = getActivity();
-                                                                    if (myBookListActivity instanceof BookListActivity)
-                                                                        ((BookListActivity)getActivity()).onItemSelected(BookId);
-                                                                    /*Intent showBookDetailIntent = new Intent(view.getContext(), BookDetailActivity.class);
-                                                                    showBookDetailIntent.setType(Intent.ACTION_VIEW);
-                                                                    showBookDetailIntent.setType("text/plain");
-                                                                    showBookDetailIntent.putExtra(getActivity().getString(R.string.book_id_label), BookId);
-                                                                    Log.d(LOG_TAG, "showBookDetailIntent is ready");
-                                                                    view.getContext().startActivity(showBookDetailIntent);*/
-                                                                }
-                                                                USER_LIST_VIEW_POSITION = position;
-                                                            }
-                                                    });
+            BookListView.setAdapter(mITBDBookSearchAdapter);
+            BookListView.setClickable(true);
+            BookListView.setOnItemClickListener(
+                    new AdapterView.OnItemClickListener()
+                    {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            Cursor cursor = mITBDBookSearchAdapter.getCursor();
+                            BookId = cursor.getString(COL_ID);
+                            if (cursor.moveToPosition(position))
+                            {
+                                Activity myBookListActivity = getActivity();
+                                if (myBookListActivity instanceof BookListActivity)
+                                    ((BookListActivity) getActivity()).onItemSelected(BookId);
+
+                            }
+                            USER_LIST_VIEW_POSITION = position;
+                        }
+                    });
 
             if (savedInstanceState != null && savedInstanceState.containsKey(USER_LIST_VIEW_POSITION_LABEL))
             {
                 USER_LIST_VIEW_POSITION = savedInstanceState.getInt(USER_LIST_VIEW_POSITION_LABEL);
             }
 
-            itbdBookSearchAdapter.setHighlightedBookLayout(isHighlightedBookLayout);
+            mITBDBookSearchAdapter.setHighlightedBookLayout(isHighlightedBookLayout);
 
             return rootView;
         }
@@ -247,24 +238,32 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data)
         {
-            itbdBookSearchAdapter.swapCursor(data);
+            mITBDBookSearchAdapter.swapCursor(data);
             if (USER_LIST_VIEW_POSITION != ListView.INVALID_POSITION)
-                book_listview.smoothScrollToPosition(USER_LIST_VIEW_POSITION);
+                BookListView.smoothScrollToPosition(USER_LIST_VIEW_POSITION);
         }
 
         @Override
         public void onLoaderReset(Loader loader)
         {
-            itbdBookSearchAdapter.swapCursor(null);
+            mITBDBookSearchAdapter.swapCursor(null);
         }
 
         public void setUseHighlightedBookLayout(boolean isHighlightedBookLayoutParam)
         {
             isHighlightedBookLayout = isHighlightedBookLayoutParam;
-            if (itbdBookSearchAdapter != null)
+            if (mITBDBookSearchAdapter != null)
             {
-                itbdBookSearchAdapter.setHighlightedBookLayout(isHighlightedBookLayout);
+                mITBDBookSearchAdapter.setHighlightedBookLayout(isHighlightedBookLayout);
             }
         }
     }
 }
+
+
+/*Intent showBookDetailIntent = new Intent(view.getContext(), BookDetailActivity.class);
+showBookDetailIntent.setType(Intent.ACTION_VIEW);
+showBookDetailIntent.setType("text/plain");
+showBookDetailIntent.putExtra(getActivity().getString(R.string.book_id_label), BookId);
+Log.d(LOG_TAG, "showBookDetailIntent is ready");
+view.getContext().startActivity(showBookDetailIntent);*/

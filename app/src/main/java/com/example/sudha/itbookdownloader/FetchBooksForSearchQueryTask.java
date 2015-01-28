@@ -32,11 +32,7 @@ public class FetchBooksForSearchQueryTask extends AsyncTask<String, Void, String
     public static final String LOG_TAG = FetchBooksForSearchQueryTask.class.getSimpleName();
 
     public FetchBooksForSearchQueryListener asyncResponseDelegate = null;
-    //private ITBDBookSearchAdapter itbdBookSearchAdapter;
     private final Context context;
-    //List<HashMap<String,String>> SearchBooksArrayList;
-    private String SearchQuery;
-    private String BookId;
     private static final int RESULTS_PER_PAGE = 10;
 
     public FetchBooksForSearchQueryTask(Context mContext)
@@ -49,90 +45,25 @@ public class FetchBooksForSearchQueryTask extends AsyncTask<String, Void, String
     @Override
     protected String doInBackground(String... params)
     {
-        SearchQuery = params[0];
-        BookId = params[1];
-        if (SearchQuery == null)
-            SearchQuery = "";
-        else if (SearchQuery.isEmpty())
-            SearchQuery = context.getString(R.string.search_query_string_default);
-        if (BookId == null)
-            BookId = "0";
-        else if (BookId.isEmpty())
-            BookId = context.getString(R.string.book_id_default);
+        String searchQuery = params[0];
+        String bookId = params[1];
+        if (searchQuery == null)
+            searchQuery = "";
+        else if (searchQuery.isEmpty())
+            searchQuery = context.getString(R.string.search_query_string_default);
+        if (bookId == null)
+            bookId = "0";
+        else if (bookId.isEmpty())
+            bookId = context.getString(R.string.book_id_default);
 
-        fetchDataParseJSONStoreData(SearchQuery,BookId);/*
-        HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-        StringBuffer buffer = new StringBuffer();
-
-        Uri.Builder searchQueryUri = Uri.parse("http://it-ebooks-api.info/v1/search/").buildUpon();
-        //String SearchQuery = params[0];
-        searchQueryUri.appendPath(SearchQuery);
-        String searchURL = searchQueryUri.toString();
-        URL weatherTaskUrl = null;
-        try
-        {
-            weatherTaskUrl = new URL(searchURL);
-            urlConnection = (HttpURLConnection) weatherTaskUrl.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.connect();
-            InputStream inputStream = urlConnection.getInputStream();
-
-            if (inputStream != null)
-            {
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null)
-                {
-                    buffer.append(line);
-                    buffer.append("\n");
-                }
-            }
-
-            if (buffer.length() != 0)
-            {
-                //WeatherDataHolder.setWeatherDataFromApiCall(buffer.toString());
-                //SearchBooksArrayList = new SearchBooksDataParser().getWeatherListDataFromJson();
-                Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
-
-            }
-        }
-        catch (MalformedURLException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ProtocolException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            if (urlConnection != null)
-                urlConnection.disconnect();
-
-            if (reader != null)
-            {
-                try
-                {
-                    reader.close();
-                } catch (final IOException e)
-                {
-                    Log.e(LOG_TAG, "Error closing stream", e);
-                }
-            }
-        }
-        return SearchBooksArrayList;*/
-        return "";
+        fetchDataParseJSONStoreData(searchQuery, bookId);
+        return "FetchBooksForSearchQueryTask Complete";
     }
 
     @Override
     protected void onPostExecute(String result)
     {
-        //super.onPostExecute();
+        Log.d(LOG_TAG, "FetchBooksForSearchQueryTask onPostExecute : " + result);
         asyncResponseDelegate.onFetchBooksForSearchQuery("Data Changed in Content Provider : Update CursorAdaptor");
     }
 
