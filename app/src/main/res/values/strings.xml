@@ -28,7 +28,7 @@
     <string name="book_id_label">BookId</string>
     <string name="search_query_label">SearchQuery</string>
 
-    <!--FetchBooksForSearchQueryTask-->
+    <!--FetchBooksInfoAsyncTask-->
     <string name="search_query_string_default">Android</string>
     <string name="book_id_default">0</string>
 

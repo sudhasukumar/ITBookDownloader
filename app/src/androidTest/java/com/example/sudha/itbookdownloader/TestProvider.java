@@ -18,7 +18,7 @@ public class TestProvider extends AndroidTestCase
 
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
     static final long TEST_BOOK_ID = 840578312L;
-    private static final int RESULTS_PER_PAGE = 10;
+    //private static final int RESULTS_PER_PAGE = 10;
 
     // brings our database to an empty state
     public void testADeleteAllRecords()
@@ -26,13 +26,13 @@ public class TestProvider extends AndroidTestCase
     mContext.getContentResolver().delete(BookEntry.BOOKS_CONTENT_URI,null,null);
     mContext.getContentResolver().delete(AuthorEntry.AUTHORS_CONTENT_URI,null,null);
 
-    /*Cursor cursor = mContext.getContentResolver().query(BookEntry.BOOKS_CONTENT_URI,null,null,null,null);
+    Cursor cursor = mContext.getContentResolver().query(BookEntry.buildBookCollectionUri(),null,null,null,null);
     assertEquals(0, cursor.getCount());
     cursor.close();
 
-    cursor = mContext.getContentResolver().query(BookEntry.buildBookIdUri(TestDb.TEST_BOOK_ID),null,null,null,null);
+    cursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorsCollectionUri(),null,null,null,null);
     assertEquals(0, cursor.getCount());
-    cursor.close();*/
+    cursor.close();
 }
 
     // Since we want each test to start with a clean slate, run deleteAllRecords
@@ -46,37 +46,37 @@ public class TestProvider extends AndroidTestCase
     {
         ContentValues TestBookInfoValues = TestDb.createBookInfoValues();
 
-        Uri BookInfoUri = mContext.getContentResolver().insert(BookEntry.BOOKS_CONTENT_URI, TestBookInfoValues);
+        Uri BookInfoUri = mContext.getContentResolver().insert(BookEntry.buildBookCollectionUri(), TestBookInfoValues);
         long BookInfoBookId = ContentUris.parseId(BookInfoUri);
         assertEquals(BookInfoBookId,TestDb.TEST_BOOK_ID);
         Log.d(LOG_TAG, "Books Insert works");
 
         Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.BOOKS_CONTENT_URI,null,null,null,null);
-        TestDb.validateCursor(BooksCursor, TestBookInfoValues);
+        TestDb.validateCursor(BooksCursor, TestBookInfoValues,true);
         Log.d(LOG_TAG, "Querying Books Inserted values works");
 
         ContentValues AuthorValues = TestDb.createAuthorValues(TestDb.TEST_BOOK_ID);
 
-        Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorBookIdUri(TestDb.TEST_BOOK_ID), AuthorValues);
+        Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(TestDb.TEST_BOOK_ID), AuthorValues);
         assertTrue(AuthorInsertUri != null);
         Log.d(LOG_TAG, "Author Insert works");
 
-        Cursor AuthorCursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorBookIdUri(TestDb.TEST_BOOK_ID), null, null, null, null);
-        TestDb.validateCursor(AuthorCursor, AuthorValues);
+        Cursor AuthorCursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(TestDb.TEST_BOOK_ID), null, null, null, null);
+        TestDb.validateCursor(AuthorCursor, AuthorValues,true);
         Log.d(LOG_TAG, "Querying Books Inserted values works");
 
         // Add the Author values in with the Book data so that we can make sure that the join worked and we actually get all the values back
         addAllContentValues(TestBookInfoValues, AuthorValues);
         // Now see if we can successfully query both tables if we include the Book Id
-        Cursor BookIdQueryCursor = mContext.getContentResolver().query(BookEntry.buildBookIdUri(TestDb.TEST_BOOK_ID),null,null,null,null);
-        TestDb.validateCursor(BookIdQueryCursor, TestBookInfoValues);
+        Cursor BookIdQueryCursor = mContext.getContentResolver().query(BookEntry.buildJoinBookIdUri(TestDb.TEST_BOOK_ID),null,null,null,null);
+        TestDb.validateCursor(BookIdQueryCursor, TestBookInfoValues,true);
     }
 
     public void testCDeleteWithBookId()
     {
-        mContext.getContentResolver().delete(BookEntry.buildBookIdUri(TestDb.TEST_BOOK_ID),null,null);
+        mContext.getContentResolver().delete(BookEntry.buildJoinBookIdUri(TestDb.TEST_BOOK_ID),null,null);
 
-        Cursor cursor = mContext.getContentResolver().query(BookEntry.buildBookIdUri(TestDb.TEST_BOOK_ID),null,null,null,null);
+        Cursor cursor = mContext.getContentResolver().query(BookEntry.buildJoinBookIdUri(TestDb.TEST_BOOK_ID),null,null,null,null);
         assertEquals(0, cursor.getCount());
         cursor.close();
     }
@@ -84,31 +84,29 @@ public class TestProvider extends AndroidTestCase
     public void testDUpdateFilePathNameAndReadBook()
     {
         testADeleteAllRecords(); //to freshly install some new data in the DB.
-        ContentValues BookInfoAndAuthorContentValues = insertBookInfoAndAuthorData();
+        insertBookInfoAndAuthorData();
 
         // Make an update to one value.
         ContentValues FilePathNameUpdateContentValues = new ContentValues();
         String newFilePathName = "This is where the file will be actually downloaded...New File Path Name";
         FilePathNameUpdateContentValues.put(AuthorEntry.COLUMN_FILE_PATHNAME, newFilePathName);
         //update DB
-        mContext.getContentResolver().update(AuthorEntry.buildAuthorBookIdUri(TEST_BOOK_ID), FilePathNameUpdateContentValues, null, null);
+        mContext.getContentResolver().update(AuthorEntry.buildAuthorsBookIdUri(TEST_BOOK_ID), FilePathNameUpdateContentValues, null, null);
 
         // Query to get a cursor with updated value
-        Cursor updateFilePathNameCursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorBookIdUri(TEST_BOOK_ID),null,null,null,null);
+        String[] projection = new String[]{AuthorEntry.COLUMN_FILE_PATHNAME};
+        Cursor updateFilePathNameCursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(TEST_BOOK_ID),projection,null,null,null);
 
-        // Make the same update to the full ContentValues for comparison.
-        ContentValues BookInfoAndAuthorContentValuesAltered = BookInfoAndAuthorContentValues;
-        BookInfoAndAuthorContentValuesAltered.put(AuthorEntry.COLUMN_FILE_PATHNAME, newFilePathName);
         //validate cursor
-        TestDb.validateCursor(updateFilePathNameCursor, BookInfoAndAuthorContentValuesAltered);
+        TestDb.validateCursor(updateFilePathNameCursor, FilePathNameUpdateContentValues,true);
     }
     public void testEBulkInsertAndQuery()
     {
         testADeleteAllRecords(); //to freshly install some new data in the DB.
         ContentValues TestDbBookInfoValues = TestDb.createBookInfoValues();
         ContentValues BookInfoValues = createBookInfoValues();
-        ContentValues[] myCV = new ContentValues[RESULTS_PER_PAGE];
-        List<ContentValues> testContentValueArrayList = new ArrayList<>(RESULTS_PER_PAGE);
+        ContentValues[] myCV = new ContentValues[]{};
+        List<ContentValues> testContentValueArrayList = new ArrayList<>();
         testContentValueArrayList.add(0,TestDbBookInfoValues);
         testContentValueArrayList.add(1,BookInfoValues);
         int rowCount = mContext.getContentResolver().bulkInsert(BookEntry.BOOKS_CONTENT_URI,testContentValueArrayList.toArray(myCV));
@@ -130,26 +128,26 @@ public class TestProvider extends AndroidTestCase
         Log.d(LOG_TAG, "Books Insert works");
 
         Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.buildBookSearchUriForSearchQuery("PHP"),null,null,null,null);
-        TestDb.validateCursor(BooksCursor, TestBookInfoValues);
+        TestDb.validateCursor(BooksCursor, TestBookInfoValues,true);
         Log.d(LOG_TAG, "Querying Books with Search Query value works");
 
     }
     public void testGetType()
     {
         String type = mContext.getContentResolver().getType(BookEntry.BOOKS_CONTENT_URI);               //content://com.example.sudha.ITBookDownloader/books
-        assertEquals(BookEntry.CONTENT_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
+        assertEquals(BookEntry.CONTENT_BOOKS_DIR_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
 
         type = mContext.getContentResolver().getType(BookEntry.buildBookSearchUriForSearchQuery("Android"));               //content://com.example.sudha.ITBookDownloader/search/{android}
-        assertEquals(BookEntry.CONTENT_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
+        assertEquals(BookEntry.CONTENT_BOOKS_DIR_TYPE, type);                                                     // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/books
 
         type = mContext.getContentResolver().getType(AuthorEntry.AUTHORS_CONTENT_URI);                  //content://com.example.sudha.ITBookDownloader/authors
-        assertEquals(AuthorEntry.CONTENT_AUTHORS_TYPE, type);                                           // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/authors
+        assertEquals(AuthorEntry.CONTENT_AUTHORS_DIR_TYPE, type);                                           // vnd.android.cursor.dir/com.example.sudha.ITBookDownloader/authors
 
-        type = mContext.getContentResolver().getType(BookEntry.buildBookIdUri(TestDb.TEST_BOOK_ID));    // content://com.example.sudha.ITBookDownloader/book/#
-        assertEquals(BookEntry.CONTENT_ITEM_TYPE, type);                                                // vnd.android.cursor.item/com.example.sudha.ITBookDownloader/books
+        type = mContext.getContentResolver().getType(BookEntry.buildJoinBookIdUri(TestDb.TEST_BOOK_ID));    // content://com.example.sudha.ITBookDownloader/book/#
+        assertEquals(BookEntry.CONTENT_BOOKS_ITEM_TYPE, type);                                                // vnd.android.cursor.item/com.example.sudha.ITBookDownloader/books
 
-        type = mContext.getContentResolver().getType(AuthorEntry.buildAuthorBookIdUri(TestDb.TEST_BOOK_ID));    // content://com.example.sudha.ITBookDownloader/book/#
-        assertEquals(AuthorEntry.CONTENT_ITEM_TYPE, type);                                                // vnd.android.cursor.item/com.example.sudha.ITBookDownloader/books
+        type = mContext.getContentResolver().getType(AuthorEntry.buildAuthorsBookIdUri(TestDb.TEST_BOOK_ID));    // content://com.example.sudha.ITBookDownloader/book/#
+        assertEquals(AuthorEntry.CONTENT_AUTHORS_ITEM_TYPE, type);                                                // vnd.android.cursor.item/com.example.sudha.ITBookDownloader/books
     }
 
     // Make sure we can still delete after adding/updating stuff
@@ -199,11 +197,11 @@ public class TestProvider extends AndroidTestCase
     protected ContentValues insertBookInfoAndAuthorData()
     {
         ContentValues BookInfoValues = createBookInfoValues();
-        Uri BookInfoInsertUri = mContext.getContentResolver().insert(BookEntry.buildBookIdUri(TEST_BOOK_ID), BookInfoValues);
+        Uri BookInfoInsertUri = mContext.getContentResolver().insert(BookEntry.buildBooksIdUri(TEST_BOOK_ID), BookInfoValues);
         assertTrue(BookInfoInsertUri != null);
 
         ContentValues authorValues = createAuthorValues(TEST_BOOK_ID);
-        Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorBookIdUri(TEST_BOOK_ID), authorValues);
+        Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(TEST_BOOK_ID), authorValues);
         assertTrue(AuthorInsertUri != null);
 
         //return combined ContentValues for comparison with cursor for inner join query

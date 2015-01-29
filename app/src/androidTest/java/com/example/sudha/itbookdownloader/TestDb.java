@@ -39,31 +39,17 @@ public class TestDb extends AndroidTestCase
         long BookInfoRowId = Db.insert(BookEntry.TABLE_NAME, null, BookInfoValues);
         assertTrue(BookInfoRowId != -1);
         Log.d(LOG_TAG, "New Book Info table insert row id: " + BookInfoRowId);
-        // A cursor is your primary interface to the query results.
-        Cursor BookInfoCursor = Db.query(
-                BookEntry.TABLE_NAME,  // Table to Query
-                null, // leaving "columns" null just returns all the columns.
-                null, // cols for "where" clause
-                null, // values for "where" clause
-                null, // columns to group by
-                null, // columns to filter by row groups
-                null  // sort order
-        );
 
-        validateCursor(BookInfoCursor, BookInfoValues);
+        Cursor BookInfoCursor = Db.query(BookEntry.TABLE_NAME,null,null,null,null,null,null);
+        validateCursor(BookInfoCursor, BookInfoValues, false);
 
         ContentValues AuthorValues = createAuthorValues(TEST_BOOK_ID);
         long AuthorRowId = Db.insert(AuthorEntry.TABLE_NAME, null, AuthorValues);
-
-        // Verify we got a row back.
         assertTrue(AuthorRowId != -1);
         Log.d(LOG_TAG, "New Author table insert row id: " + AuthorRowId);
 
-        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
-        // the round trip.A cursor is your primary interface to the query results.
         Cursor AuthorCursor = Db.query(AuthorEntry.TABLE_NAME,null,null,null,null,null,null);
-
-        validateCursor(AuthorCursor, AuthorValues);
+        validateCursor(AuthorCursor, AuthorValues, false);
 
         DbHelper.close();
     }
@@ -97,14 +83,14 @@ public class TestDb extends AndroidTestCase
         return AuthorValues;
     }
 
-    static void validateCursor(Cursor valueCursor, ContentValues expectedValues)
+    static void validateCursor(Cursor valueCursor, ContentValues expectedValues,boolean isIdConversionEnabled)
     {
         assertTrue(valueCursor.moveToFirst());
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry : valueSet)
         {
             String columnName = entry.getKey();
-            if (columnName.equals("BookId")) //This check is for Cursor fetching BookId as _id for the sake of CursorAdaptors
+            if (isIdConversionEnabled && (columnName.equals("BookId"))) //This check is for Cursor fetching BookId as _id for the sake of CursorAdaptors
                 columnName = "_id";
 
             int idx = valueCursor.getColumnIndex(columnName);

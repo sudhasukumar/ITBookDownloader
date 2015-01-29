@@ -27,7 +27,7 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
         final String SQL_CREATE_BOOKINFO_TABLE = "CREATE TABLE " + BookEntry.TABLE_NAME                     + " (" +
                                                                  BookEntry.COLUMN_BOOK_ID                   + " INTEGER PRIMARY KEY ," +
                                                                  BookEntry.COLUMN_BOOK_SEARCH_QUERY         + " TEXT NOT NULL ," +
-                                                                 BookEntry.COLUMN_TITLE                     + " TEXT UNIQUE NOT NULL , " +
+                                                                 BookEntry.COLUMN_TITLE                     + " TEXT NOT NULL , " +
                                                                  BookEntry.COLUMN_SUBTITLE                  + " TEXT NOT NULL , " +
                                                                  BookEntry.COLUMN_DESCRIPTION               + " TEXT NOT NULL , " +
                                                                  BookEntry.COLUMN_ISBN                      + " INTEGER NOT NULL , " +
@@ -41,7 +41,7 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
                                                                 AuthorEntry.COLUMN_PAGE             + " INTEGER NOT NULL, " +
                                                                 AuthorEntry.COLUMN_PUBLISHER        + " TEXT NOT NULL, " +
                                                                 AuthorEntry.COLUMN_DOWNLOAD_LINK    + " TEXT NOT NULL, " +
-                                                                AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT, " +
+                                                                AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT NOT NULL, " +
                      " FOREIGN KEY (" + AuthorEntry.COLUMN_BOOK_ID          + ") REFERENCES " + BookEntry.TABLE_NAME + " (" + BookEntry.COLUMN_BOOK_ID + ") ON DELETE CASCADE , " +
                      " UNIQUE (" + AuthorEntry.COLUMN_BOOK_ID + ", " + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", "  + AuthorEntry.COLUMN_FILE_PATHNAME + ") ON CONFLICT REPLACE);";
 

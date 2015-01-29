@@ -98,7 +98,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
         {
             BookSearchListJSONString = FetchBookSearchResults(BookId);
             // Check if the BookId is present in the Books table...It should be there since the search with BookId originated from that info
-            Cursor AuthorCursor = getContext().getContentResolver().query(AuthorEntry.buildAuthorBookIdUri(BookId),  new String[]{BookEntry._ID}, null, null, null);
+            Cursor AuthorCursor = getContext().getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(BookId),  new String[]{BookEntry._ID}, null, null, null);
             if (AuthorCursor.moveToFirst()) // Assuming the Book Id is present when the cursor moves to first row
             {
                 int BookIdIndex = AuthorCursor.getColumnIndex(BookEntry._ID);
@@ -321,7 +321,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
 
     private void storeDataInITBDProvider(ContentValues mContentValues, long longBookId) // This method is overloaded
     {
-        Uri AuthorInsertUri = getContext().getContentResolver().insert(AuthorEntry.buildAuthorBookIdUri(longBookId), mContentValues);
+        Uri AuthorInsertUri = getContext().getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(longBookId), mContentValues);
         Log.d(LOG_TAG, "Author Insert complete for URI : " + AuthorInsertUri);
     }
 

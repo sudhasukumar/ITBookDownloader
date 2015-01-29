@@ -61,13 +61,13 @@ public class BookListActivity extends ActionBarActivity
 
     }
 
-    public void onItemSelected(String bookId)
+    public void onItemSelected(String mBookId)
     {
         if (mTwoPane)
         {
             // In two-pane mode, show the detail view in this activity by adding or replacing the detail fragment using a fragment transaction.
             Bundle args = new Bundle();
-            args.putString(BookDetailActivity.BookId, bookId);
+            args.putString(BookDetailActivity.BookId, mBookId);
 
             BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
             bookDetailsFragment.setArguments(args);
@@ -76,9 +76,16 @@ public class BookListActivity extends ActionBarActivity
         }
         else
         {
-            Intent ViewBookDetailIntent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
+            Intent showBookDetailIntent = new Intent(this, BookDetailActivity.class);
+            showBookDetailIntent.setAction(Intent.ACTION_VIEW);
+            showBookDetailIntent.setType("text/plain");
+            String BookIdLabel = this.getString(R.string.book_id_label);
+            showBookDetailIntent.putExtra(BookIdLabel, BookId);
+            Log.d(LOG_TAG, "showBookDetailIntent is ready");
+            startActivity(showBookDetailIntent);
+            /*Intent ViewBookDetailIntent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
             ViewBookDetailIntent.setAction(Intent.ACTION_VIEW);
-            startActivity(ViewBookDetailIntent);
+            startActivity(ViewBookDetailIntent);*/
         }
     }
 
@@ -102,7 +109,7 @@ public class BookListActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public static class BookListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchBooksForSearchQueryListener
+    public static class BookListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  //, FetchBooksForSearchQueryListener
     {
         public static final String LOG_TAG = BookListFragment.class.getSimpleName();
         private ITBDBookSearchAdapter mITBDBookSearchAdapter;
@@ -191,6 +198,7 @@ public class BookListActivity extends ActionBarActivity
                         {
                             Cursor cursor = mITBDBookSearchAdapter.getCursor();
                             BookId = cursor.getString(COL_ID);
+                            Log.d(LOG_TAG, " The Chosen Book is : " + BookId);
                             if (cursor.moveToPosition(position))
                             {
                                 Activity myBookListActivity = getActivity();
@@ -214,16 +222,16 @@ public class BookListActivity extends ActionBarActivity
 
         private void updateSearchBookList(String searchQuery, String bookId)
         {
-            FetchBooksForSearchQueryTask fetchBooksForSearchQueryTask = new FetchBooksForSearchQueryTask(getActivity());
-            fetchBooksForSearchQueryTask.asyncResponseDelegate = this;
-            fetchBooksForSearchQueryTask.execute(searchQuery, bookId);
+            FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
+            //fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
+            fetchBooksInfoAsyncTask.execute(searchQuery, bookId);
         }
 
-        @Override
+        /*@Override
         public void onFetchBooksForSearchQuery(String result)
         {
             Log.d(LOG_TAG, "Check if Data has changed in List view " + result);
-        }
+        }*/
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args)

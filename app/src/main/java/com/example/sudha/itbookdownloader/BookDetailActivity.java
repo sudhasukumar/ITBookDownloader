@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -78,9 +79,10 @@ public class BookDetailActivity extends ActionBarActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class BookDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FetchBooksForSearchQueryListener
+    public static class BookDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>   //, FetchBooksForSearchQueryListener
     {
         private static String LOG_TAG = BookDetailsFragment.class.getSimpleName();
+        private ITBDBookDetailsAdapter mITBDBookDetailsAdapter;
         private static final String[] BOOK_DETAILS_COLUMNS = {
                 BookEntry._ID,
                 BookEntry.COLUMN_TITLE,
@@ -96,7 +98,7 @@ public class BookDetailActivity extends ActionBarActivity
                 AuthorEntry.COLUMN_DOWNLOAD_LINK,
                 AuthorEntry.COLUMN_FILE_PATHNAME
         };
-        // These indices are tied to BOOK_SEARCH_COLUMNS.  If BOOK_SEARCH_COLUMNS changes, these must change.
+        // These indices are tied to BOOK_DETAILS_COLUMNS.  If BOOK_DETAILS_COLUMNS changes, these must change.
         public static final int _ID = 0;
         public static final int COLUMN_TITLE = 1;
         public static final int COLUMN_SUBTITLE = 2;
@@ -126,6 +128,29 @@ public class BookDetailActivity extends ActionBarActivity
         private String BookDetailsShareString;
         private static final String BOOK_DETAILS_SHARE_HASHTAG = " #IT Book Downloader Application";
 
+        private static final String[] BOOK_DETAILS_FROM_ADAPTER_COLUMNS = {
+
+                                                                     BookEntry.COLUMN_TITLE,
+                                                                     BookEntry.COLUMN_SUBTITLE,
+                                                                     BookEntry.COLUMN_DESCRIPTION,
+                                                                     BookEntry.COLUMN_ISBN,
+                                                                     AuthorEntry.COLUMN_AUTHORNAME,
+                                                                     AuthorEntry.COLUMN_YEAR,
+                                                                     AuthorEntry.COLUMN_PAGE,
+                                                                     AuthorEntry.COLUMN_PUBLISHER,
+        };
+
+        private static final String[] BOOK_DETAILS_TO_ADAPTER_COLUMNS = {
+
+                                                                                  BookEntry.COLUMN_TITLE,
+                                                                                  BookEntry.COLUMN_SUBTITLE,
+                                                                                  BookEntry.COLUMN_DESCRIPTION,
+                                                                                  BookEntry.COLUMN_ISBN,
+                                                                                  AuthorEntry.COLUMN_AUTHORNAME,
+                                                                                  AuthorEntry.COLUMN_YEAR,
+                                                                                  AuthorEntry.COLUMN_PAGE,
+                                                                                  AuthorEntry.COLUMN_PUBLISHER,
+        };
 
 
         public BookDetailsFragment()
@@ -133,11 +158,11 @@ public class BookDetailActivity extends ActionBarActivity
             setHasOptionsMenu(true);
         }
 
-        /*@Override
+        @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
         {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            inflater.inflate(R.menu.detailfragment, menu);
+            /*// Inflate the menu; this adds items to the action bar if it is present.
+            inflater.inflate(R.menu.menu_book_detail, menu);
 
             // Retrieve the share menu item
             MenuItem menuItem = menu.findItem(R.id.action_share);
@@ -148,12 +173,13 @@ public class BookDetailActivity extends ActionBarActivity
             // If onLoadFinished happens before this, we can go ahead and set the share intent now.
             if (mForecast != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
-            }
-        }*/
+            }*/
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
+            mITBDBookDetailsAdapter = new ITBDBookDetailsAdapter(this.getActivity(),null,0);
             Bundle bundleArguments = getArguments();
             if (bundleArguments != null)
             {
@@ -177,9 +203,9 @@ public class BookDetailActivity extends ActionBarActivity
 
         private void updateBookIdDetails(String bookId)
         {
-            FetchBooksForSearchQueryTask fetchBooksForSearchQueryTask = new FetchBooksForSearchQueryTask(getActivity());
-            fetchBooksForSearchQueryTask.asyncResponseDelegate = this;
-            fetchBooksForSearchQueryTask.execute(null, bookId);
+            FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
+            //fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
+            fetchBooksInfoAsyncTask.execute(null, bookId);
         }
 
         @Override
@@ -212,7 +238,7 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
         {
-            Uri BOOK_ID_URI = BookEntry.buildBookIdUri(Long.parseLong(BookId));
+            Uri BOOK_ID_URI = BookEntry.buildJoinBookIdUri(Long.parseLong(BookId));
             return new CursorLoader(getActivity(), BOOK_ID_URI, BOOK_DETAILS_COLUMNS, null, null, null);
         }
 
@@ -270,10 +296,10 @@ public class BookDetailActivity extends ActionBarActivity
             Log.d(LOG_TAG, "onLoaderReset : " + cursorLoader.toString());
         }
 
-        @Override
+        /*@Override
         public void onFetchBooksForSearchQuery(String Result)
         {
             Log.d(LOG_TAG, "Check if Data has changed in Details View" + Result);
-        }
+        }*/
     }
 }
