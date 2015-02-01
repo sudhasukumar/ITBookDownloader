@@ -2,7 +2,7 @@
 <!-- Master layout. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
     <!-- Book Image, Book Title, Book Subtitle , Author, ISBN, year, page, publisher, Description, Download Link -->
     <LinearLayout
         android:gravity="center_vertical"
@@ -23,26 +23,40 @@
 <!--Book Title-->
     <TextView
         android:id="@+id/detail_book_title_textview"
-        android:fontFamily="sans-serif-condensed"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:text="@string/sample_title_text"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="30sp"
         android:textColor="@color/black"
-        android:textSize="30sp" />
+        android:padding="15dp"
+    />
+        <!--android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/black"
+        android:textSize="30sp"-->
+
 
 <!--Book Subtitle-->
     <TextView
         android:id="@+id/detail_book_subtitle_textview"
-        android:fontFamily="sans-serif-condensed"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:text="@string/sample_subtitle_text"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="20sp"
         android:textColor="@color/black"
-        android:textSize="20sp" />
+        android:padding="15dp"
+    />
+        <!--android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/black"
+        android:textSize="20sp"-->
+
 <!--Author-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_author_textview_label"
                 android:layout_width="wrap_content"
@@ -50,21 +64,22 @@
                 android:text="@string/text_view_author_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_author_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 <!--ISBN-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_ISBN_textview_label"
                 android:layout_width="wrap_content"
@@ -72,21 +87,22 @@
                 android:text="@string/text_view_isbn_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_ISBN_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 <!--Year-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_year_textview_label"
                 android:layout_width="wrap_content"
@@ -94,21 +110,22 @@
                 android:text="@string/text_view_year_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_year_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 <!--Page-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_page_textview_label"
                 android:layout_width="wrap_content"
@@ -116,21 +133,22 @@
                 android:text="@string/text_view_page_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_page_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 <!--Publisher-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_publisher_textview_label"
                 android:layout_width="wrap_content"
@@ -138,21 +156,22 @@
                 android:text="@string/text_view_publisher_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_publisher_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 <!--Description-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
             <TextView
                 android:id="@+id/detail_book_description_textview_label"
                 android:layout_width="wrap_content"
@@ -160,14 +179,15 @@
                 android:text="@string/text_view_description_label"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+                android:textColor="@color/black"
+            />
             <TextView
                 android:id="@+id/detail_book_description_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                />
+            />
         </LinearLayout>
 
 

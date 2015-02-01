@@ -17,13 +17,23 @@ public class FetchBooksInfoAsyncTask extends AsyncTask<String, Void, String>
     public FetchBooksInfoAsyncTask(Context mContext)
     {
         this.context = mContext;
+        //this.asyncResponseDelegate = mAsyncResponseDelegate;
     }
 
     @Override
     protected String doInBackground(String... params)
     {
         Utility utility = new Utility(context);
-        utility.prepareInputForAsyncTask(params[0], params[1]);
+        try
+        {
+            utility.prepareInputForAsyncTask(params[0], params[1]);
+        }
+        catch ( Exception e )
+        {
+            Log.d(LOG_TAG, " FetchBooksInfoAsyncTask doInBackground catch exception : " + e.getMessage());
+            e.printStackTrace();
+        }
+
         return "FetchBooksInfoAsyncTask Complete";
     }
 

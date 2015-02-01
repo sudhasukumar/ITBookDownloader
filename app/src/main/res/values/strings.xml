@@ -40,5 +40,7 @@
     <string name="text_view_page_label">Page :</string>
     <string name="text_view_publisher_label">Publisher :</string>
     <string name="text_view_description_label">Description :</string>
+    <string name="sample_title_text">Sample Title Text</string>
+    <string name="sample_subtitle_text">Sample Sub Title Text</string>
 
 </resources>

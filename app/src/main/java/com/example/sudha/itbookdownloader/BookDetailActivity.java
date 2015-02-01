@@ -79,10 +79,11 @@ public class BookDetailActivity extends ActionBarActivity
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class BookDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>   //, FetchBooksForSearchQueryListener
+    public static class BookDetailsFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>   , FetchBooksForSearchQueryListener
     {
         private static String LOG_TAG = BookDetailsFragment.class.getSimpleName();
-        private ITBDBookDetailsAdapter mITBDBookDetailsAdapter;
+        private static final String PREVIOUS_BOOK_ID_LABEL      = "PreviousBookId";
+        //private ITBDBookDetailsAdapter mITBDBookDetailsAdapter;
         private static final String[] BOOK_DETAILS_COLUMNS = {
                 BookEntry._ID,
                 BookEntry.COLUMN_TITLE,
@@ -128,17 +129,17 @@ public class BookDetailActivity extends ActionBarActivity
         private String BookDetailsShareString;
         private static final String BOOK_DETAILS_SHARE_HASHTAG = " #IT Book Downloader Application";
 
-        private static final String[] BOOK_DETAILS_FROM_ADAPTER_COLUMNS = {
+        /*private static final String[] BOOK_DETAILS_FROM_ADAPTER_COLUMNS = {
 
-                                                                     BookEntry.COLUMN_TITLE,
-                                                                     BookEntry.COLUMN_SUBTITLE,
-                                                                     BookEntry.COLUMN_DESCRIPTION,
-                                                                     BookEntry.COLUMN_ISBN,
-                                                                     AuthorEntry.COLUMN_AUTHORNAME,
-                                                                     AuthorEntry.COLUMN_YEAR,
-                                                                     AuthorEntry.COLUMN_PAGE,
-                                                                     AuthorEntry.COLUMN_PUBLISHER,
-        };
+                                                                                 BookEntry.COLUMN_TITLE,
+                                                                                 BookEntry.COLUMN_SUBTITLE,
+                                                                                 BookEntry.COLUMN_DESCRIPTION,
+                                                                                 BookEntry.COLUMN_ISBN,
+                                                                                 AuthorEntry.COLUMN_AUTHORNAME,
+                                                                                 AuthorEntry.COLUMN_YEAR,
+                                                                                 AuthorEntry.COLUMN_PAGE,
+                                                                                 AuthorEntry.COLUMN_PUBLISHER,
+                                                                           };
 
         private static final String[] BOOK_DETAILS_TO_ADAPTER_COLUMNS = {
 
@@ -150,7 +151,7 @@ public class BookDetailActivity extends ActionBarActivity
                                                                                   AuthorEntry.COLUMN_YEAR,
                                                                                   AuthorEntry.COLUMN_PAGE,
                                                                                   AuthorEntry.COLUMN_PUBLISHER,
-        };
+                                                                        };*/
 
 
         public BookDetailsFragment()
@@ -179,13 +180,14 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            mITBDBookDetailsAdapter = new ITBDBookDetailsAdapter(this.getActivity(),null,0);
+            Log.d(LOG_TAG,"BookDetailsFragment onCreateView : ");
+            //mITBDBookDetailsAdapter = new ITBDBookDetailsAdapter(this.getActivity(),null,0);
             Bundle bundleArguments = getArguments();
             if (bundleArguments != null)
             {
                 BookId = bundleArguments.getString(getString(R.string.book_id_label));
             }
-            updateBookIdDetails(BookId);
+            fetchBookIdDetails(BookId);
             View rootView = inflater.inflate(R.layout.fragment_book_detail, container, false);
 
             DetailBookImageView = (ImageView) rootView.findViewById(R.id.detail_book_image_view);
@@ -201,17 +203,18 @@ public class BookDetailActivity extends ActionBarActivity
             return rootView;
         }
 
-        private void updateBookIdDetails(String bookId)
+        private void fetchBookIdDetails(String bookId)
         {
+            Log.d(LOG_TAG,"BookDetailsFragment fetchBookIdDetails : ");
             FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
-            //fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
+            fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
             fetchBooksInfoAsyncTask.execute(null, bookId);
         }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState)
         {
-            // Initialise Loader here...Loader's lifecycle is bound to Activity Lifecycle not Fragment
+            Log.d(LOG_TAG,"BookDetailsFragment onActivityCreated : ");
             getLoaderManager().initLoader(BOOK_DETAILS_LOADER, null, this);
             super.onActivityCreated(savedInstanceState);
         }
@@ -219,6 +222,7 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public void onResume()
         {
+            Log.d(LOG_TAG,"BookDetailsFragment onResume : ");
             super.onResume();
             Bundle bundleArguments = getArguments();
             if ((bundleArguments != null) && (bundleArguments.containsKey(getActivity().getString(R.string.book_id_label))))
@@ -231,13 +235,16 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public void onSaveInstanceState(Bundle outState)
         {
-            outState.putString(BOOK_ID_LABEL, BookId);
+            Log.d(LOG_TAG,"BookDetailsFragment onSaveInstanceState : ");
+            //outState.putString(BOOK_ID_LABEL, BookId);
+            outState.putString(PREVIOUS_BOOK_ID_LABEL, BookId);
             super.onSaveInstanceState(outState);
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
         {
+            Log.d(LOG_TAG,"BookDetailsFragment onCreateLoader : ");
             Uri BOOK_ID_URI = BookEntry.buildJoinBookIdUri(Long.parseLong(BookId));
             return new CursorLoader(getActivity(), BOOK_ID_URI, BOOK_DETAILS_COLUMNS, null, null, null);
         }
@@ -245,6 +252,7 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursorData)
         {
+            Log.d(LOG_TAG,"BookDetailsFragment onLoadFinished : ");
             if (cursorData != null && cursorData.moveToFirst()) //we have a book to display
             {
                 String BookTitle = cursorData.getString(COLUMN_TITLE);
@@ -269,8 +277,8 @@ public class BookDetailActivity extends ActionBarActivity
                 String BookSearchQuery = cursorData.getString(COLUMN_BOOK_SEARCH_QUERY);
                 String BookDownloadLink = cursorData.getString(COLUMN_DOWNLOAD_LINK);
                 String BookFilePathName = cursorData.getString(COLUMN_FILE_PATHNAME);
-                Log.d(LOG_TAG, "BookIdFromCursor : " + BookIdFromCursor + "BookSearchQuery : " + BookSearchQuery +
-                        "BookDownloadLink : " + BookDownloadLink + "BookFilePathName : " + BookFilePathName);
+                Log.d(LOG_TAG, "BookIdFromCursor : " + BookIdFromCursor + "  BookSearchQuery : " + BookSearchQuery +
+                        "  BookDownloadLink : " + BookDownloadLink + "  BookFilePathName : " + BookFilePathName);
 
                 BookDetailsShareString = String.format("%s - %s - %s", BookTitle, BookAuthor, BookISBN);
 
@@ -284,6 +292,7 @@ public class BookDetailActivity extends ActionBarActivity
 
         private Intent createShareBookDetailsIntent()
         {
+            Log.d(LOG_TAG,"BookDetailsFragment createShareBookDetailsIntent : ");
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(Intent.EXTRA_TEXT, BookDetailsShareString + BOOK_DETAILS_SHARE_HASHTAG);
@@ -293,13 +302,16 @@ public class BookDetailActivity extends ActionBarActivity
         @Override
         public void onLoaderReset(Loader<Cursor> cursorLoader)
         {
+            Log.d(LOG_TAG,"BookDetailsFragment onLoaderReset : ");
             Log.d(LOG_TAG, "onLoaderReset : " + cursorLoader.toString());
         }
 
-        /*@Override
+        @Override
         public void onFetchBooksForSearchQuery(String Result)
         {
+            Log.d(LOG_TAG,"BookDetailsFragment onFetchBooksForSearchQuery : ");
+            getLoaderManager().restartLoader(BOOK_DETAILS_LOADER, null, this);
             Log.d(LOG_TAG, "Check if Data has changed in Details View" + Result);
-        }*/
+        }
     }
 }

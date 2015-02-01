@@ -65,7 +65,7 @@ public class ITBDBookSearchAdapter extends CursorAdapter
 
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag("BookSearch");
+        view.setTag(viewHolder);
         return view;
     }
 

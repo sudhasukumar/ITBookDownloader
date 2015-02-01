@@ -55,7 +55,7 @@ public class ITBDBookDetailsAdapter extends CursorAdapter
     {
         View view = LayoutInflater.from(context).inflate(R.layout.fragment_book_detail, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag("BookDetails");
+        view.setTag(viewHolder);
         return view;
     }
 
