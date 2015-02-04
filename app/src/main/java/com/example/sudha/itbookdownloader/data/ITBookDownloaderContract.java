@@ -86,11 +86,14 @@ public class ITBookDownloaderContract
 
         public static final String TABLE_NAME = "Authors";
         public static final String COLUMN_BOOK_ID = "BookId"; //Foreign key for Books.COLUMN_BOOK_ID
+        public static final String COLUMN_WEBSITE_BOOK_NUMBER = "WebsiteBookNumber";
+        public static final String COLUMN_AUTHOR_ISBN = "AuthorIsbn";
         public static final String COLUMN_AUTHORNAME = "AuthorName";
         public static final String COLUMN_YEAR = "Year";
         public static final String COLUMN_PAGE = "Page";
         public static final String COLUMN_PUBLISHER = "Publisher";
         public static final String COLUMN_DOWNLOAD_LINK = "Downloadlink";
+        public static final String COLUMN_FILE_FORMAT = "FileFormat";
         public static final String COLUMN_FILE_PATHNAME = "FilePathName";
 
         public static Uri buildAuthorsCollectionUri()

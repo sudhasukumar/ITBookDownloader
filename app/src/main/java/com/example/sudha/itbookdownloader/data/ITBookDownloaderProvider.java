@@ -43,44 +43,41 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     static
     {
-        BooksProjectionMap
-                .put(BookEntry._ID, BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
+        BooksProjectionMap.put(BookEntry._ID, BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
         BooksProjectionMap.put(BookEntry.COLUMN_TITLE, BookEntry.COLUMN_TITLE);
         BooksProjectionMap.put(BookEntry.COLUMN_SUBTITLE, BookEntry.COLUMN_SUBTITLE);
         BooksProjectionMap.put(BookEntry.COLUMN_DESCRIPTION, BookEntry.COLUMN_DESCRIPTION);
         BooksProjectionMap.put(BookEntry.COLUMN_ISBN, BookEntry.COLUMN_ISBN);
         BooksProjectionMap.put(BookEntry.COLUMN_IMAGE_LINK, BookEntry.COLUMN_IMAGE_LINK);
-        BooksProjectionMap
-                .put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY);
+        BooksProjectionMap.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY);
 
-        AuthorsProjectionMap
-                .put(AuthorEntry._ID, AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID + " AS " + AuthorEntry._ID);
+        AuthorsProjectionMap.put(AuthorEntry._ID, AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID + " AS " + AuthorEntry._ID);
+        AuthorsProjectionMap.put(AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER, AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER);
+        AuthorsProjectionMap.put(AuthorEntry.COLUMN_AUTHOR_ISBN, AuthorEntry.COLUMN_AUTHOR_ISBN);
         AuthorsProjectionMap.put(AuthorEntry.COLUMN_AUTHORNAME, AuthorEntry.COLUMN_AUTHORNAME);
         AuthorsProjectionMap.put(AuthorEntry.COLUMN_YEAR, AuthorEntry.COLUMN_YEAR);
         AuthorsProjectionMap.put(AuthorEntry.COLUMN_PAGE, AuthorEntry.COLUMN_PAGE);
         AuthorsProjectionMap.put(AuthorEntry.COLUMN_PUBLISHER, AuthorEntry.COLUMN_PUBLISHER);
-        AuthorsProjectionMap
-                .put(AuthorEntry.COLUMN_DOWNLOAD_LINK, AuthorEntry.COLUMN_DOWNLOAD_LINK);
-        AuthorsProjectionMap
-                .put(AuthorEntry.COLUMN_FILE_PATHNAME, AuthorEntry.COLUMN_FILE_PATHNAME);
+        AuthorsProjectionMap.put(AuthorEntry.COLUMN_DOWNLOAD_LINK, AuthorEntry.COLUMN_DOWNLOAD_LINK);
+        AuthorsProjectionMap.put(AuthorEntry.COLUMN_FILE_FORMAT, AuthorEntry.COLUMN_FILE_FORMAT);
+        AuthorsProjectionMap.put(AuthorEntry.COLUMN_FILE_PATHNAME, AuthorEntry.COLUMN_FILE_PATHNAME);
 
-        JoinBookIdProjectionMap
-                .put(BookEntry._ID, BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
+        JoinBookIdProjectionMap.put(BookEntry._ID, BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " AS " + BookEntry._ID);
         JoinBookIdProjectionMap.put(BookEntry.COLUMN_TITLE, BookEntry.COLUMN_TITLE);
         JoinBookIdProjectionMap.put(BookEntry.COLUMN_SUBTITLE, BookEntry.COLUMN_SUBTITLE);
         JoinBookIdProjectionMap.put(BookEntry.COLUMN_DESCRIPTION, BookEntry.COLUMN_DESCRIPTION);
         JoinBookIdProjectionMap.put(BookEntry.COLUMN_ISBN, BookEntry.COLUMN_ISBN);
         JoinBookIdProjectionMap.put(BookEntry.COLUMN_IMAGE_LINK, BookEntry.COLUMN_IMAGE_LINK);
-        JoinBookIdProjectionMap
-                .put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY);
+        JoinBookIdProjectionMap.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, BookEntry.COLUMN_BOOK_SEARCH_QUERY);
+        JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER, AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER);
+        JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_AUTHOR_ISBN, AuthorEntry.COLUMN_AUTHOR_ISBN);
         JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_AUTHORNAME, AuthorEntry.COLUMN_AUTHORNAME);
         JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_YEAR, AuthorEntry.COLUMN_YEAR);
         JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_PAGE, AuthorEntry.COLUMN_PAGE);
         JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_PUBLISHER, AuthorEntry.COLUMN_PUBLISHER);
-        JoinBookIdProjectionMap
-                .put(AuthorEntry.COLUMN_DOWNLOAD_LINK, AuthorEntry.COLUMN_DOWNLOAD_LINK);
-        JoinBookIdProjectionMap
-                .put(AuthorEntry.COLUMN_FILE_PATHNAME, AuthorEntry.COLUMN_FILE_PATHNAME);
+        JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_DOWNLOAD_LINK, AuthorEntry.COLUMN_DOWNLOAD_LINK);
+        JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_FILE_FORMAT, AuthorEntry.COLUMN_FILE_FORMAT);
+        JoinBookIdProjectionMap.put(AuthorEntry.COLUMN_FILE_PATHNAME, AuthorEntry.COLUMN_FILE_PATHNAME);
 
         BooksTableQueryBuilder = new SQLiteQueryBuilder();
         BooksTableQueryBuilder.setTables(BookEntry.TABLE_NAME);
@@ -91,9 +88,8 @@ public class ITBookDownloaderProvider extends ContentProvider
         AuthorsTableQueryBuilder.setProjectionMap(AuthorsProjectionMap);
 
         BooksAndAuthorsQueryBuilder = new SQLiteQueryBuilder();
-        BooksAndAuthorsQueryBuilder
-                .setTables(BookEntry.TABLE_NAME + " INNER JOIN " + AuthorEntry.TABLE_NAME + " ON " +
-                           BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = " + AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID);
+        BooksAndAuthorsQueryBuilder.setTables(BookEntry.TABLE_NAME + " INNER JOIN " + AuthorEntry.TABLE_NAME + " ON " +
+                                              BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID + " = " + AuthorEntry.TABLE_NAME + "." + AuthorEntry.COLUMN_BOOK_ID);
         BooksAndAuthorsQueryBuilder.setProjectionMap(JoinBookIdProjectionMap);
 
     }
@@ -105,15 +101,13 @@ public class ITBookDownloaderProvider extends ContentProvider
     private Cursor getBooksCollection(String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Log.d(LOG_TAG, "getBooksCollection : ");
-        return BooksTableQueryBuilder
-                       .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return BooksTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getAuthorsCollection(String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Log.d(LOG_TAG, "getAuthorsCollection : ");
-        return AuthorsTableQueryBuilder
-                       .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return AuthorsTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getBookInfoAndAuthorForId(Uri uri, String[] projection, String sortOrder)
@@ -123,8 +117,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         String BookId = BookEntry.getBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
         BooksAndAuthorsQueryBuilder.setProjectionMap(JoinBookIdProjectionMap);
-        return BooksAndAuthorsQueryBuilder
-                       .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return BooksAndAuthorsQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getBooksBookIdInfo(Uri uri, String[] projection, String sortOrder)
@@ -134,8 +127,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         String BookId = BookEntry.getBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
         BooksTableQueryBuilder.setProjectionMap(BooksProjectionMap);
-        return BooksTableQueryBuilder
-                       .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return BooksTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getAuthorsBookIdInfo(Uri uri, String[] projection, String sortOrder)
@@ -145,8 +137,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         String BookId = AuthorEntry.getAuthorsBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
         AuthorsTableQueryBuilder.setProjectionMap(AuthorsProjectionMap);
-        return AuthorsTableQueryBuilder
-                       .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
+        return AuthorsTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getBookCollectionForSearchQuery(Uri uri, String[] projection, String sortOrder)

@@ -31,11 +31,6 @@
         android:textColor="@color/black"
         android:padding="15dp"
     />
-        <!--android:fontFamily="sans-serif-condensed"
-        android:textColor="@color/black"
-        android:textSize="30sp"-->
-
-
 <!--Book Subtitle-->
     <TextView
         android:id="@+id/detail_book_subtitle_textview"
@@ -56,7 +51,8 @@
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+            >
             <TextView
                 android:id="@+id/detail_book_author_textview_label"
                 android:layout_width="wrap_content"
@@ -72,14 +68,16 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-            />
+                android:paddingLeft="15dp"
+                />
         </LinearLayout>
 <!--ISBN-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+            >
             <TextView
                 android:id="@+id/detail_book_ISBN_textview_label"
                 android:layout_width="wrap_content"
@@ -95,7 +93,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-            />
+                android:paddingLeft="15dp"
+                />
         </LinearLayout>
 <!--Year-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -118,7 +117,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-            />
+                android:paddingLeft="15dp"
+                />
         </LinearLayout>
 <!--Page-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -141,7 +141,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-            />
+                android:paddingLeft="15dp"
+                />
         </LinearLayout>
 <!--Publisher-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -164,7 +165,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-            />
+                android:paddingLeft="15dp"
+                />
         </LinearLayout>
 <!--Description-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -190,6 +192,21 @@
             />
         </LinearLayout>
 
+        <Button
+            android:id="@+id/detail_book_download_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/download_button_label"
+            android:fontFamily="sans-serif-condensed"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:padding="15dp"
+            android:background="@color/ITBD_dark_orange"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:paddingTop="15dp"
+
+        />
 
     </LinearLayout>
 

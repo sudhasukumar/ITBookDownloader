@@ -12,7 +12,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,7 +64,7 @@ public class Utility
             String WebsiteBookNumber = getWebsiteBookNumber(BookISBNSearchHTMLString);
             String BookDetailsWebUri = getBookDetailsWebUri(WebsiteBookNumber);
             String BookSearchListJSONString = makeNetworkApiCall(BookDetailsWebUri);
-            parseWebsiteHtmlAndStoreData(BookSearchListJSONString, mIsbn , bookId , WebsiteBookNumber);
+            parseWebsiteHtmlAndStoreData(BookSearchListJSONString, mIsbn , bookId , WebsiteBookNumber);  // Store websiteBookNumber in Author Data for referer field value to download file
         }
         else if ( (Isbn.equals("0")) && (searchQuery.equals("") ) ) // BookId Search
         {
@@ -86,8 +85,8 @@ public class Utility
             long LongBookIdFromJson = BooksBookIdCursor.getLong(BookIdIndex);
             if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
             {
-                ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString,mBookId); //...get Authors Info from WebsiteBookNumber HTML Doc
-                Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString, mIsbn , mBookId , mWebsiteBookNumber); //...get Authors Info from WebsiteBookNumber HTML Doc
+                //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 if ( AuthorValues.size() != 0 )
                     storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
@@ -98,7 +97,7 @@ public class Utility
         }
     }
 
-    private ContentValues getWebsiteBookNumberAuthorData(String mBookSearchListJSONString, String mBookId)
+    private ContentValues getWebsiteBookNumberAuthorData(String mBookSearchListJSONString, String mIsbn, String mBookId, String mWebsiteBookNumber)
     {
 /*<td class="justify link">
 <h4>Book Description</h4>
@@ -159,28 +158,34 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
             Document BookIdDocument = Jsoup.parse(mBookSearchListJSONString);
             Element BookIdDocumentBody = BookIdDocument.body();
             Element TdJustifyLinkElement = BookIdDocumentBody.getElementsByClass("justify").first();
-            Elements TdJustify = BookIdDocumentBody.select("td[class^=justify]");
+            //Elements TdJustify = BookIdDocumentBody.select("td[class^=justify]");
             String BookDescription = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "description").first().text();
-            Log.d(LOG_TAG, "Book Description : " + BookDescription);
+            //Log.d(LOG_TAG, "Book Description : " + BookDescription);
             updateBookDescriptionInITBDProvider(mBookId,BookDescription); //update the new description
+
             String AuthorName = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "author").first().text();
-            Log.d(LOG_TAG, "AuthorName : " + AuthorName);
+            //Log.d(LOG_TAG, "AuthorName : " + AuthorName);
             String Year = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "datePublished").first().text();
-            Log.d(LOG_TAG, "Published Year : " + Year);
+            //Log.d(LOG_TAG, "Published Year : " + Year);
             String Page = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "numberOfPages").first().text();
-            Log.d(LOG_TAG, "Page : " + Page);
+            //Log.d(LOG_TAG, "Page : " + Page);
             String Publisher = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop","publisher").first().text();
-            Log.d(LOG_TAG, "Publisher : " + Publisher);
-            String DownloadLink = TdJustifyLinkElement.select("a[href*=filepi.com").first().attr("href").toString();
-            Log.d(LOG_TAG, "DownloadLink : " + DownloadLink);
+            //Log.d(LOG_TAG, "Publisher : " + Publisher);
+            String BookFormat = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop","bookFormat").first().text();
+            //Log.d(LOG_TAG, "BookFormat : " + BookFormat);
+            String DownloadLink = TdJustifyLinkElement.select("a[href*=filepi.com").first().attr("href");
+            //Log.d(LOG_TAG, "DownloadLink : " + DownloadLink);
 
 
             AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, mBookId);
+            AuthorValues.put(AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER, mWebsiteBookNumber);
+            AuthorValues.put(AuthorEntry.COLUMN_AUTHOR_ISBN, mIsbn);
             AuthorValues.put(AuthorEntry.COLUMN_AUTHORNAME, AuthorName);
             AuthorValues.put(AuthorEntry.COLUMN_YEAR, Year);
             AuthorValues.put(AuthorEntry.COLUMN_PAGE, Page);
             AuthorValues.put(AuthorEntry.COLUMN_PUBLISHER, Publisher);
             AuthorValues.put(AuthorEntry.COLUMN_DOWNLOAD_LINK, DownloadLink);
+            AuthorValues.put(AuthorEntry.COLUMN_FILE_FORMAT, BookFormat);
             AuthorValues.put(AuthorEntry.COLUMN_FILE_PATHNAME, "file Path name TBD");
         }
         catch ( Exception e )
@@ -196,7 +201,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         ContentValues descriptionCV = new ContentValues();
         descriptionCV.put(BookEntry.COLUMN_DESCRIPTION,bookDescription);
         context.getContentResolver().update(BookEntry.buildBooksIdUri(Long.parseLong(mBookId)), descriptionCV, null, null);
-        Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
+        //Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
     }
 
     private String getBookDetailsWebUri(String websiteBookNumber)
@@ -212,7 +217,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         int startIndex = bookISBNSearchHTMLString.indexOf(patternToMatch);
         String WebsiteBookNumber = bookISBNSearchHTMLString.substring(startIndex+15, startIndex+19);
         return WebsiteBookNumber;*/
-        String WebsiteBookNumber = Jsoup.parse(bookISBNSearchHTMLString).select("a[href*=/book/]").first().attr("href").toString();
+        String WebsiteBookNumber = Jsoup.parse(bookISBNSearchHTMLString).select("a[href*=/book/]").first().attr("href");
         String[] WebsiteBookNumberArray = WebsiteBookNumber.split("/"); //(6,10);
         WebsiteBookNumber = WebsiteBookNumberArray[2];
         return WebsiteBookNumber;
@@ -248,11 +253,11 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
     protected void parseSearchQueryJsonAndStoreData(String mBookSearchListJSONString, String mSearchQuery)
     {
         CopyOnWriteArrayList<ContentValues> ContentValueArrayList;
-        Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + mSearchQuery + " *** " + mBookSearchListJSONString);
+        //Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + mSearchQuery + " *** " + mBookSearchListJSONString);
         if ( mBookSearchListJSONString.length() != 0 ) //When you have a list from Web Api Call
         {
             ContentValueArrayList = getBookSearchListDataFromJson(mBookSearchListJSONString, mSearchQuery); //Get the Content Values from JSON
-            Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + mSearchQuery);
+            //Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + mSearchQuery);
             if ( !ContentValueArrayList.isEmpty() )
                 storeDataInITBDProvider(ContentValueArrayList); // Initiate Bulk Insert into Books table
         }
@@ -270,7 +275,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
             if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
             {
                 ContentValues AuthorValues = getBookIdAuthorDataFromJson(mBookSearchListJSONString); //...get Authors Info from JSON
-                Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 if ( AuthorValues.size() != 0 )
                     storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
@@ -353,7 +358,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         }
         catch ( JSONException e )
         {
-            Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return BookInfoValues;
@@ -406,7 +411,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         }
         catch ( JSONException e )
         {
-            Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return AuthorValues;
@@ -439,7 +444,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
                 ContentValues BookInfoValues;
 
                 BooksArray = BookSearchListJsonObject.getJSONArray(JSON_BOOKS);
-                Log.d(LOG_TAG, " BooksArray Length : " + BooksArray.length() + " BooksArray : " + BooksArray.toString());
+                //Log.d(LOG_TAG, " BooksArray Length : " + BooksArray.length() + " BooksArray : " + BooksArray.toString());
 
                 for ( int i = 0; i < BooksArray.length(); i++ )
                 {
@@ -451,42 +456,42 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
                         JSONObject BookInfoJsonObject = BooksArray.getJSONObject(i);
                         long BookId = Long.parseLong(getValueFromJson(BookInfoJsonObject, JSON_ID));
                         BookInfoValues.put(BookEntry.COLUMN_BOOK_ID, BookId);
-                        Log.d(LOG_TAG, "*** BookId : " + BookId);
+                        //Log.d(LOG_TAG, "*** BookId : " + BookId);
 
                         String Title = getValueFromJson(BookInfoJsonObject, JSON_TITLE);
                         BookInfoValues.put(BookEntry.COLUMN_TITLE, Title);
 
                         String Subtitle = getValueFromJson(BookInfoJsonObject, JSON_SUBTITLE);
                         BookInfoValues.put(BookEntry.COLUMN_SUBTITLE, Subtitle);
-                        Log.d(LOG_TAG, " Subtitle : " + Subtitle);
+                        //Log.d(LOG_TAG, " Subtitle : " + Subtitle);
 
                         String Description = getValueFromJson(BookInfoJsonObject, JSON_DESCRIPTION);
                         BookInfoValues.put(BookEntry.COLUMN_DESCRIPTION, Description);
-                        Log.d(LOG_TAG, " Description : " + Description);
+                        //Log.d(LOG_TAG, " Description : " + Description);
 
                         long ISBN = Long.parseLong(getValueFromJson(BookInfoJsonObject, JSON_ISBN));
                         BookInfoValues.put(BookEntry.COLUMN_ISBN, ISBN);
-                        Log.d(LOG_TAG, " ISBN : " + ISBN);
+                        //Log.d(LOG_TAG, " ISBN : " + ISBN);
 
                         String ImageLink = getValueFromJson(BookInfoJsonObject, JSON_IMAGELINK);
                         BookInfoValues.put(BookEntry.COLUMN_IMAGE_LINK, ImageLink);
-                        Log.d(LOG_TAG, " ImageLink : " + ImageLink);
+                        //Log.d(LOG_TAG, " ImageLink : " + ImageLink);
 
                         BookInfoValues.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, mSearchQuery);
-                        Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
+                        //Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
                     }
                     catch ( JSONException e )
                     {
-                        Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
+                        //Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
                         e.printStackTrace();
                     }
                     catch ( NumberFormatException e )
                     {
-                        Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
+                        //Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
                         e.printStackTrace();
                     }
                     mContentValueArrayList.add(i, BookInfoValues);
-                    Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
+                    //Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
                 }
             }
             else //{"Error":"Book not found!"}
@@ -497,7 +502,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         }
         catch ( JSONException e )
         {
-            Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return mContentValueArrayList;
@@ -521,10 +526,10 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         }
         catch ( JSONException e )
         {
-            Log.d(LOG_TAG, " getValueFromJson : " + e.getMessage());
+            //Log.d(LOG_TAG, " getValueFromJson : " + e.getMessage());
             e.printStackTrace();
         }
-        Log.d(LOG_TAG, " getValueFromJson : " + mKey + " : " + mValue);
+        //Log.d(LOG_TAG, " getValueFromJson : " + mKey + " : " + mValue);
         return mValue;
     }
 
@@ -546,11 +551,10 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         {
             BookIdInsertUri = context.getContentResolver().insert(BookEntry.buildBooksIdUri(longBookId), mContentValues);
         }
-        else
-            if ( mTableName.equals(AuthorEntry.TABLE_NAME) )
-            {
-                BookIdInsertUri = context.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(longBookId), mContentValues);
-            }
+        else if ( mTableName.equals(AuthorEntry.TABLE_NAME) )
+        {
+            BookIdInsertUri = context.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(longBookId), mContentValues);
+        }
         Log.d(LOG_TAG, " Insert complete for URI : " + BookIdInsertUri);
     }
 
@@ -558,7 +562,6 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
     {
         Uri.Builder bookQueryUri = Uri.parse(context.getString(R.string.api_book_id)).buildUpon();
         bookQueryUri.appendPath(String.valueOf(mBookId));
-        //return makeNetworkApiCall(bookQueryUri.toString());
         return bookQueryUri.toString();
     }
 
@@ -566,19 +569,18 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
     {
         Uri.Builder searchQueryUri = Uri.parse(context.getString(R.string.api_book_search)).buildUpon();
         searchQueryUri.appendPath(mSearchQuery);
-        //return makeNetworkApiCall(searchQueryUri.toString());
         return searchQueryUri.toString();
     }
 
     private String getWebApiUriString(String isbnLabel, String isbn)
     {
-        Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
+        Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search_url)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
         IsbnQueryUri.appendQueryParameter("q", isbn);
         IsbnQueryUri.appendQueryParameter("type","isbn");
         return IsbnQueryUri.toString();
     }
 
-    private String makeNetworkApiCall(String ITEbooksInfoUrl)
+    String makeNetworkApiCall(String ITEbooksInfoUrl)
     {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -605,7 +607,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
 
             if ( buffer.length() != 0 )
             {
-                Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
+                //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
             }
         }
         catch ( MalformedURLException | ProtocolException e )
@@ -636,4 +638,64 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         return buffer.toString();
     }
 
+    public String makeBookDownloadNetworkApiCall(String fileDownloadUrl, String mReferrerPropertyValue)
+    {
+        HttpURLConnection urlConnection = null;
+        BufferedReader reader = null;
+        StringBuffer buffer = new StringBuffer();
+        String Referer = context.getString(R.string.referer_property_field);
+        String WebsiteBookRefererURL = "http://it-ebooks.info/book/" + mReferrerPropertyValue + "/";
+        URL fetchBookTaskUrl;
+        try
+        {
+            fetchBookTaskUrl = new URL(fileDownloadUrl);
+            urlConnection = (HttpURLConnection) fetchBookTaskUrl.openConnection();
+            urlConnection.setRequestMethod("GET");
+            urlConnection.setRequestProperty(Referer, WebsiteBookRefererURL);
+            urlConnection.connect();
+            InputStream inputStream = urlConnection.getInputStream();
+
+            if ( inputStream != null )
+            {
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ( (line = reader.readLine()) != null )
+                {
+                    buffer.append(line);
+                    buffer.append("\n");
+                }
+            }
+
+            if ( buffer.length() != 0 )
+            {
+                //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
+            }
+        }
+        catch ( MalformedURLException | ProtocolException e )
+        {
+            e.printStackTrace();
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if ( urlConnection != null )
+                urlConnection.disconnect();
+
+            if ( reader != null )
+            {
+                try
+                {
+                    reader.close();
+                }
+                catch ( final IOException e )
+                {
+                    Log.e(LOG_TAG, "Error closing stream", e);
+                }
+            }
+        }
+        return buffer.toString();
+    }
 }

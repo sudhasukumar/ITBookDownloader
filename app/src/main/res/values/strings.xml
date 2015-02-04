@@ -23,7 +23,7 @@
     <!-- Network Api call URLs -->
     <string name="api_book_id">http://it-ebooks-api.info/v1/book</string>
     <string name="api_book_search">http://it-ebooks-api.info/v1/search/</string>
-    <string name="isbn_website_book_search">http://it-ebooks.info/search/</string>
+    <string name="isbn_website_book_search_url">http://it-ebooks.info/search/</string>
 
     <!--BookListActivity-->
     <string name="search_query_label">SearchQuery</string>
@@ -46,6 +46,9 @@
     <string name="sample_subtitle_text">Sample Sub Title Text</string>
     <string name="book_isbn_default">9781449390501</string>
     <string name="book_number_website_book_search">http://www.it-ebooks.info/book/</string>
+    <string name="download_button_label">Download</string>
+    <string name="download_dir_path">/ITBDownloader/download</string>
+    <string name="referer_property_field">referer</string>
 
 
 </resources>

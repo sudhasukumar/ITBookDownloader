@@ -183,11 +183,14 @@ public class TestProvider extends AndroidTestCase
         // Create a new map of values, where column names are the keys
         ContentValues AuthorValues = new ContentValues();
         AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, BookId);
+        AuthorValues.put(AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER, 2249);
+        AuthorValues.put(AuthorEntry.COLUMN_AUTHOR_ISBN, 9780596007010L);
         AuthorValues.put(AuthorEntry.COLUMN_AUTHORNAME, "Ian F. Darwin");
         AuthorValues.put(AuthorEntry.COLUMN_YEAR, 2004);
         AuthorValues.put(AuthorEntry.COLUMN_PAGE, 864);
         AuthorValues.put(AuthorEntry.COLUMN_PUBLISHER, "O'Reilly Media");
         AuthorValues.put(AuthorEntry.COLUMN_DOWNLOAD_LINK, "http://filepi.com/i/TfhcXwr");
+        AuthorValues.put(AuthorEntry.COLUMN_FILE_FORMAT, "PDF");
         AuthorValues.put(AuthorEntry.COLUMN_FILE_PATHNAME, "file Path name");
 
         return AuthorValues;

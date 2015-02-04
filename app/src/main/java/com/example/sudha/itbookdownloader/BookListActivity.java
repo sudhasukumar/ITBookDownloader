@@ -119,7 +119,6 @@ public class BookListActivity extends ActionBarActivity
         private ITBDBookSearchAdapter mITBDBookSearchAdapter;
         private ListView BookListView;
         private int USER_LIST_VIEW_POSITION = ListView.INVALID_POSITION;
-        private boolean isHighlightedBookLayout;
         private static final String USER_LIST_VIEW_POSITION_LABEL = "user_selected_position";
         private static final int BOOK_SEARCH_LOADER = 0;
         private static final String[] BOOK_SEARCH_COLUMNS = {   //BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID,
@@ -263,10 +262,8 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args)
         {
-            // Sort order:  Ascending, by Book Title.
             final String SORT_TITLE_ASC = BookEntry.COLUMN_TITLE + " ASC";
             Uri BOOK_SEARCH_URI = BookEntry.buildBookSearchUriForSearchQuery(SearchQuery);
-            // Now create and return a CursorLoader that will take care of creating a Cursor for the data being displayed.
             return new CursorLoader(getActivity(), BOOK_SEARCH_URI, BOOK_SEARCH_COLUMNS, null, null, SORT_TITLE_ASC);
         }
 
@@ -284,14 +281,6 @@ public class BookListActivity extends ActionBarActivity
             mITBDBookSearchAdapter.swapCursor(null);
         }
 
-        public void setUseHighlightedBookLayout(boolean isHighlightedBookLayoutParam)
-        {
-            isHighlightedBookLayout = isHighlightedBookLayoutParam;
-            if (mITBDBookSearchAdapter != null)
-            {
-                mITBDBookSearchAdapter.setHighlightedBookLayout(isHighlightedBookLayout);
-            }
-        }
     }
 }
 

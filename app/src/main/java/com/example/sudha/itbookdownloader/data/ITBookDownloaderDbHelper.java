@@ -34,16 +34,19 @@ public class ITBookDownloaderDbHelper extends SQLiteOpenHelper
                                                                  BookEntry.COLUMN_IMAGE_LINK                + " TEXT NOT NULL , " +
                                                     " UNIQUE (" + BookEntry.COLUMN_BOOK_ID + ", " + BookEntry.COLUMN_ISBN         + ") ON CONFLICT REPLACE );";
 
-        final String SQL_CREATE_AUTHOR_TABLE = "CREATE TABLE " + AuthorEntry.TABLE_NAME             + " (" +
-                                                                AuthorEntry.COLUMN_BOOK_ID          + " INTEGER PRIMARY KEY, " +
-                                                                AuthorEntry.COLUMN_AUTHORNAME       + " TEXT NOT NULL, " +
-                                                                AuthorEntry.COLUMN_YEAR             + " INTEGER NOT NULL, " +
-                                                                AuthorEntry.COLUMN_PAGE             + " INTEGER NOT NULL, " +
-                                                                AuthorEntry.COLUMN_PUBLISHER        + " TEXT NOT NULL, " +
-                                                                AuthorEntry.COLUMN_DOWNLOAD_LINK    + " TEXT NOT NULL, " +
-                                                                AuthorEntry.COLUMN_FILE_PATHNAME    + " TEXT NOT NULL, " +
+        final String SQL_CREATE_AUTHOR_TABLE = "CREATE TABLE " + AuthorEntry.TABLE_NAME                 + " (" +
+                                                                AuthorEntry.COLUMN_BOOK_ID              + " INTEGER PRIMARY KEY, " +
+                                                                AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER  + " INTEGER NOT NULL, " +
+                                                                AuthorEntry.COLUMN_AUTHOR_ISBN          + " INTEGER NOT NULL, " +
+                                                                AuthorEntry.COLUMN_AUTHORNAME           + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_YEAR                 + " INTEGER NOT NULL, " +
+                                                                AuthorEntry.COLUMN_PAGE                 + " INTEGER NOT NULL, " +
+                                                                AuthorEntry.COLUMN_PUBLISHER            + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_DOWNLOAD_LINK        + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_FILE_FORMAT          + " TEXT NOT NULL, " +
+                                                                AuthorEntry.COLUMN_FILE_PATHNAME        + " TEXT NOT NULL, " +
                      " FOREIGN KEY (" + AuthorEntry.COLUMN_BOOK_ID          + ") REFERENCES " + BookEntry.TABLE_NAME + " (" + BookEntry.COLUMN_BOOK_ID + ") ON DELETE CASCADE , " +
-                     " UNIQUE (" + AuthorEntry.COLUMN_BOOK_ID + ", " + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", "  + AuthorEntry.COLUMN_FILE_PATHNAME + ") ON CONFLICT REPLACE);";
+                     " UNIQUE (" + AuthorEntry.COLUMN_BOOK_ID + ", " + AuthorEntry.COLUMN_WEBSITE_BOOK_NUMBER + ", " + AuthorEntry.COLUMN_DOWNLOAD_LINK + ", "  + AuthorEntry.COLUMN_FILE_PATHNAME + ") ON CONFLICT REPLACE);";
 
         sqLiteDatabase.execSQL(SQL_CREATE_BOOKINFO_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_AUTHOR_TABLE);

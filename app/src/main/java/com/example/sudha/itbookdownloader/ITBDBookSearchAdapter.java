@@ -29,6 +29,7 @@ public class ITBDBookSearchAdapter extends CursorAdapter
         public final ImageView ImageView;
         public final TextView TitleView;
         public final TextView SubTitleView;
+        public final TextView ISBNLabelView;
         public final TextView ISBNView;
 
         public ViewHolder(View view)
@@ -36,6 +37,7 @@ public class ITBDBookSearchAdapter extends CursorAdapter
             ImageView = (ImageView) view.findViewById(R.id.list_item_book_image_view);
             TitleView = (TextView) view.findViewById(R.id.list_item_book_title_textview);
             SubTitleView = (TextView) view.findViewById(R.id.list_item_book_subtitle_textview);
+            ISBNLabelView = (TextView) view.findViewById(R.id.list_item_book_ISBN_textview_label);
             ISBNView = (TextView) view.findViewById(R.id.list_item_book_ISBN_textview);
         }
     }
@@ -95,6 +97,7 @@ public class ITBDBookSearchAdapter extends CursorAdapter
 
         String Subtitle = cursor.getString(BookListActivity.BookListFragment.COL_SUBTITLE);
         viewHolder.SubTitleView.setText(Subtitle);
+
 
         String isbn = cursor.getString(BookListActivity.BookListFragment.COL_ISBN);
         viewHolder.ISBNView.setText(isbn);
