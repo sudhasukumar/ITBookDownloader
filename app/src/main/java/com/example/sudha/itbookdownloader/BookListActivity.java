@@ -29,6 +29,7 @@ public class BookListActivity extends ActionBarActivity
     private final        String LOG_TAG                     = BookListActivity.class.getSimpleName();
     private static       String DefaultSearchQuery          = null;
     private static       String SearchQuery                 = null;
+    private static       String ISBN                        = null;
     private static       String BookId                      = null;
     private static final String PREVIOUS_SEARCH_QUERY_LABEL = "PreviousSearchQuery";
 
@@ -82,6 +83,8 @@ public class BookListActivity extends ActionBarActivity
             showBookDetailIntent.setType("text/plain");
             String BookIdLabel = this.getString(R.string.book_id_label);
             showBookDetailIntent.putExtra(BookIdLabel, BookId);
+            String IsbnLabel = this.getString(R.string.isbn_label);
+            showBookDetailIntent.putExtra(IsbnLabel, ISBN);
             Log.d(LOG_TAG, "showBookDetailIntent is ready");
             startActivity(showBookDetailIntent);
             /*Intent ViewBookDetailIntent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
@@ -157,7 +160,7 @@ public class BookListActivity extends ActionBarActivity
             mITBDBookSearchAdapter = new ITBDBookSearchAdapter(getActivity(), null, 0);
             View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
             BookListView = (ListView) rootView.findViewById(R.id.listview_book_search);
-            updateSearchBookList(SearchQuery, BookId);
+            updateSearchBookList(SearchQuery, ISBN, BookId);
             BookListView.setAdapter(mITBDBookSearchAdapter);
             BookListView.setClickable(true);
 
@@ -168,8 +171,11 @@ public class BookListActivity extends ActionBarActivity
                                                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                                                 {
                                                                     Cursor cursor = mITBDBookSearchAdapter.getCursor();
+
+                                                                    ISBN = cursor.getString(COL_ISBN);
                                                                     BookId = cursor.getString(COL_ID);
-                                                                    Log.d(LOG_TAG, " The Chosen Book is : " + BookId);
+
+                                                                    Log.d(LOG_TAG, " The Chosen Book ID is : " + BookId + " The Chosen Book ISBN is : " + ISBN);
                                                                     if (cursor.moveToPosition(position))
                                                                     {
                                                                         Activity myBookListActivity = getActivity();
@@ -180,12 +186,12 @@ public class BookListActivity extends ActionBarActivity
                                                                     USER_LIST_VIEW_POSITION = position;
                                                                 }
                                                             });
-            if ((savedInstanceState != null)&&(savedInstanceState.containsKey(PREVIOUS_SEARCH_QUERY_LABEL)))
+            /*if ((savedInstanceState != null)&&(savedInstanceState.containsKey(PREVIOUS_SEARCH_QUERY_LABEL)))
             {
                 String PreviousSearchQuery = savedInstanceState.getString(PREVIOUS_SEARCH_QUERY_LABEL);
                 if ( (PreviousSearchQuery != null) && (!PreviousSearchQuery.equals(SearchQuery)) )
                     updateSearchBookList(SearchQuery, BookId);
-            }
+            }*/
 
             if (( savedInstanceState != null )&& (savedInstanceState.containsKey(USER_LIST_VIEW_POSITION_LABEL)))
                 USER_LIST_VIEW_POSITION = savedInstanceState.getInt(USER_LIST_VIEW_POSITION_LABEL);
@@ -193,11 +199,11 @@ public class BookListActivity extends ActionBarActivity
             return rootView;
         }
 
-        private void updateSearchBookList(String searchQuery, String bookId)
+        private void updateSearchBookList(String searchQuery, String isbn, String bookId)
         {
             FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
             fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
-            fetchBooksInfoAsyncTask.execute(searchQuery, bookId);
+            fetchBooksInfoAsyncTask.execute(searchQuery, isbn , bookId);
         }
 
         @Override
@@ -213,6 +219,20 @@ public class BookListActivity extends ActionBarActivity
             // Initialise Loader here...Loader's lifecycle is bound to Activity Lifecycle not Fragment
             getLoaderManager().initLoader(BOOK_SEARCH_LOADER, null, this);
             super.onActivityCreated(savedInstanceState);
+        }
+
+        @Override
+        public void onStop()
+        {
+            super.onStop();
+            Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : " + BookId);
+        }
+
+        @Override
+        public void onStart()
+        {
+            super.onStart();
+            Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : "  + BookId);
         }
 
         @Override

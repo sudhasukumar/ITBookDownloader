@@ -23,10 +23,12 @@
     <!-- Network Api call URLs -->
     <string name="api_book_id">http://it-ebooks-api.info/v1/book</string>
     <string name="api_book_search">http://it-ebooks-api.info/v1/search/</string>
+    <string name="isbn_website_book_search">http://it-ebooks.info/search/</string>
 
     <!--BookListActivity-->
-    <string name="book_id_label">BookId</string>
     <string name="search_query_label">SearchQuery</string>
+    <string name="isbn_label">ISBN</string>
+    <string name="book_id_label">BookId</string>
 
     <!--FetchBooksInfoAsyncTask-->
     <string name="search_query_string_default">Android</string>
@@ -42,5 +44,8 @@
     <string name="text_view_description_label">Description :</string>
     <string name="sample_title_text">Sample Title Text</string>
     <string name="sample_subtitle_text">Sample Sub Title Text</string>
+    <string name="book_isbn_default">9781449390501</string>
+    <string name="book_number_website_book_search">http://www.it-ebooks.info/book/</string>
+
 
 </resources>

@@ -9,6 +9,10 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,24 +46,178 @@ public class Utility
         return 0;
     }
 
-    protected void prepareInputForAsyncTask(String mSearchQuery,String mBookId)
+    protected void prepareInputForAsyncTask(String mSearchQuery, String mIsbn, String mBookId)
     {
         String searchQuery = prepareInputForBookSearch(context.getString(R.string.search_query_label),mSearchQuery);
+        String Isbn = prepareInputForBookSearch(context.getString(R.string.isbn_label),mIsbn);
         String bookId = prepareInputForBookSearch(context.getString(R.string.book_id_label),mBookId);
         String WebApiUriString;
-        if( bookId.equals("0") )
+        if( (Isbn.equals("0") ) && (bookId.equals("0") ) ) // SearchQuery Search
         {
             WebApiUriString = getWebApiUriString(searchQuery);
             String BookSearchListJSONString = makeNetworkApiCall(WebApiUriString);
-            parseSearchQueryJsonAndStoreData(BookSearchListJSONString,searchQuery);
+            parseSearchQueryJsonAndStoreData(BookSearchListJSONString, searchQuery);
         }
-        else
+        else if ( (!bookId.equals("0") ) && (searchQuery.equals("") ) && (!mIsbn.equals("0")) ) // ISBN Search
+        {
+            WebApiUriString = getWebApiUriString(context.getString(R.string.isbn_label), Isbn);
+            String BookISBNSearchHTMLString = makeNetworkApiCall(WebApiUriString);
+            String WebsiteBookNumber = getWebsiteBookNumber(BookISBNSearchHTMLString);
+            String BookDetailsWebUri = getBookDetailsWebUri(WebsiteBookNumber);
+            String BookSearchListJSONString = makeNetworkApiCall(BookDetailsWebUri);
+            parseWebsiteHtmlAndStoreData(BookSearchListJSONString, mIsbn , bookId , WebsiteBookNumber);
+        }
+        else if ( (Isbn.equals("0")) && (searchQuery.equals("") ) ) // BookId Search
         {
             WebApiUriString = getWebApiUriString(Long.parseLong(bookId));
             String BookSearchListJSONString = makeNetworkApiCall(WebApiUriString);
             parseAuthorsBookIdAndStoreData(BookSearchListJSONString, bookId);
         }
     }
+
+    private void parseWebsiteHtmlAndStoreData(String mBookSearchListJSONString, String mIsbn , String mBookId, String mWebsiteBookNumber)
+    {
+        long BookId = Long.parseLong(mBookId);
+        // Check if the BookId is present in the Books table...It should be there since the search with BookId originated from that info
+        Cursor BooksBookIdCursor = context.getContentResolver().query(BookEntry.buildBooksIdUri(BookId), new String[]{BookEntry._ID}, null, null, null);
+        if ( BooksBookIdCursor.moveToFirst() ) // Assuming the Book Id is present when the cursor moves to first row
+        {
+            int BookIdIndex = BooksBookIdCursor.getColumnIndex(BookEntry._ID);
+            long LongBookIdFromJson = BooksBookIdCursor.getLong(BookIdIndex);
+            if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
+            {
+                ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString,mBookId); //...get Authors Info from WebsiteBookNumber HTML Doc
+                Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                if ( AuthorValues.size() != 0 )
+                    storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
+            }
+            else //Book Id is present in Books Table But web Api call doesnt return anything
+            {
+                Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
+            }
+        }
+    }
+
+    private ContentValues getWebsiteBookNumberAuthorData(String mBookSearchListJSONString, String mBookId)
+    {
+/*<td class="justify link">
+<h4>Book Description</h4>
+<span itemprop="description">Want to add more interactivity and polish to your websites? Discover how <a href="/tag/jquery/" title="jQuery eBooks">jQuery</a> can help you build complex scripting functionality in just a few lines of code. With Head First jQuery, you'll quickly get up to speed on this amazing <a href="/tag/javascript/" title="JavaScript eBooks">JavaScript</a> library by learning how to navigate <a href="/tag/html/" title="HTML eBooks">HTML</a> documents while handling events, effects, callbacks, and animations. By the time you've completed the book, you'll be incorporating Ajax apps, working seamlessly with HTML and CSS, and handling data with PHP, MySQL and JSON.<br />
+<br />
+If you want to learn - and understand - how to create interactive web pages, unobtrusive script, and cool animations that don't kill your browser, this book is for you.</span>
+<table width="100%">
+<tr><td colspan="2"><h4>Book Details</h4></td></tr>
+<tr><td width="150">Publisher:</td><td><b><a href="/publisher/3/" title="O'Reilly Media eBooks" itemprop="publisher">O'Reilly Media</a></b></td></tr>
+<tr><td>By:</td><td><b itemprop="author" style="display:none;">Ryan Benedetti, Ronan Cranley</b><b><a href='/author/1229/' title='Ryan Benedetti'>Ryan Benedetti</a>, <a href='/author/1221/' title='Ronan Cranley'>Ronan Cranley</a></b></td></tr>
+<tr><td>ISBN:</td><td><b itemprop="isbn">978-1-4493-9321-2</b></td></tr>
+<tr><td>Year:</td><td><b itemprop="datePublished">2011</b></td></tr>
+<tr><td>Pages:</td><td><b itemprop="numberOfPages">544</b></td></tr>
+<tr><td>Language:</td><td><b itemprop="inLanguage">English</b></td></tr>
+<tr><td>File size:</td><td><b>68.9 MB</b></td></tr>
+<tr><td>File format:</td><td><b itemprop="bookFormat">PDF</b></td></tr>
+<tr><td colspan="2"><h4>eBook</h4></td></tr>
+<tr><td>Download:</td><td><a href='http://filepi.com/i/VZeYTsV'>Head First jQuery</a></td></tr>
+<tr><td colspan="2"><h4>Paper Book</h4></td></tr>
+<tr><td>Buy:</td><td><a href="http://isbn.directory/book/978-1-4493-9321-2" target="_blank">Head First jQuery</a></td></tr>
+
+<tr><td colspan="2"><br><br></td></tr>
+<tr><td colspan="2">
+
+<div class="soc1"><g:plusone size="medium"></g:plusone></div>
+<div class="soc2"><a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="ITeBooks">Tweet</a><script async type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>
+<div class="soc3"><div id="fb-root"></div><script async src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="" send="false" layout="button_count" width="450" show_faces="true" action="like" font="tahoma"></fb:like></div>
+
+</td></tr>
+
+<tr><td colspan="2"><br><br></td></tr>
+<tr><td colspan="2"><h4>Related Books</h4></td></tr>
+<tr><td colspan="2">
+<table><tr valign="top" align="center">
+<td width='166'><a href='/book/102/' title='Head First SQL' style='border:0'><img src='/images/ebooks/3/head_first_sql.jpg' alt='Head First SQL' width='150' class='border'></a><br>
+<a href='/book/102/' title='Head First SQL' style='border:0'>Head First SQL</a>
+</td><td width='166'><a href='/book/103/' title='Head First JavaScript' style='border:0'><img src='/images/ebooks/3/head_first_javascript.jpg' alt='Head First JavaScript' width='150' class='border'></a><br>
+<a href='/book/103/' title='Head First JavaScript' style='border:0'>Head First JavaScript</a>
+</td><td width='166'><a href='/book/217/' title='Head First PHP & MySQL' style='border:0'><img src='/images/ebooks/3/head_first_php__mysql.jpg' alt='Head First PHP & MySQL' width='150' class='border'></a><br>
+<a href='/book/217/' title='Head First PHP & MySQL' style='border:0'>Head First PHP & MySQL</a>
+</td>   </tr></table>
+</td></tr>
+
+</table>
+
+</td>
+
+/*
+.getElementsByTag("h1").text();
+Elements getElementsByAttributeValueMatching(String key, Pattern pattern)
+el.select("a[href*=example.com]")
+Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-java-jsoup-example.html#ixzz3Qj7TwGOP
+*/
+        ContentValues AuthorValues = new ContentValues();
+
+        try
+        {
+            Document BookIdDocument = Jsoup.parse(mBookSearchListJSONString);
+            Element BookIdDocumentBody = BookIdDocument.body();
+            Element TdJustifyLinkElement = BookIdDocumentBody.getElementsByClass("justify").first();
+            Elements TdJustify = BookIdDocumentBody.select("td[class^=justify]");
+            String BookDescription = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "description").first().text();
+            Log.d(LOG_TAG, "Book Description : " + BookDescription);
+            updateBookDescriptionInITBDProvider(mBookId,BookDescription); //update the new description
+            String AuthorName = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "author").first().text();
+            Log.d(LOG_TAG, "AuthorName : " + AuthorName);
+            String Year = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "datePublished").first().text();
+            Log.d(LOG_TAG, "Published Year : " + Year);
+            String Page = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "numberOfPages").first().text();
+            Log.d(LOG_TAG, "Page : " + Page);
+            String Publisher = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop","publisher").first().text();
+            Log.d(LOG_TAG, "Publisher : " + Publisher);
+            String DownloadLink = TdJustifyLinkElement.select("a[href*=filepi.com").first().attr("href").toString();
+            Log.d(LOG_TAG, "DownloadLink : " + DownloadLink);
+
+
+            AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, mBookId);
+            AuthorValues.put(AuthorEntry.COLUMN_AUTHORNAME, AuthorName);
+            AuthorValues.put(AuthorEntry.COLUMN_YEAR, Year);
+            AuthorValues.put(AuthorEntry.COLUMN_PAGE, Page);
+            AuthorValues.put(AuthorEntry.COLUMN_PUBLISHER, Publisher);
+            AuthorValues.put(AuthorEntry.COLUMN_DOWNLOAD_LINK, DownloadLink);
+            AuthorValues.put(AuthorEntry.COLUMN_FILE_PATHNAME, "file Path name TBD");
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return AuthorValues;
+
+    }
+
+    private void updateBookDescriptionInITBDProvider(String mBookId, String bookDescription)
+    {
+        ContentValues descriptionCV = new ContentValues();
+        descriptionCV.put(BookEntry.COLUMN_DESCRIPTION,bookDescription);
+        context.getContentResolver().update(BookEntry.buildBooksIdUri(Long.parseLong(mBookId)), descriptionCV, null, null);
+        Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
+    }
+
+    private String getBookDetailsWebUri(String websiteBookNumber)
+    {
+        Uri.Builder BookDetailsWebsiteUri = Uri.parse(context.getString(R.string.book_number_website_book_search)).buildUpon(); //http://www.it-ebooks.info/book/{345}/
+        BookDetailsWebsiteUri.appendPath(websiteBookNumber);
+        return BookDetailsWebsiteUri.toString();
+    }
+
+    private String getWebsiteBookNumber(String bookISBNSearchHTMLString)
+    {
+        /*String patternToMatch = "<a href=\"/book/";
+        int startIndex = bookISBNSearchHTMLString.indexOf(patternToMatch);
+        String WebsiteBookNumber = bookISBNSearchHTMLString.substring(startIndex+15, startIndex+19);
+        return WebsiteBookNumber;*/
+        String WebsiteBookNumber = Jsoup.parse(bookISBNSearchHTMLString).select("a[href*=/book/]").first().attr("href").toString();
+        String[] WebsiteBookNumberArray = WebsiteBookNumber.split("/"); //(6,10);
+        WebsiteBookNumber = WebsiteBookNumberArray[2];
+        return WebsiteBookNumber;
+    }
+
 
     private String prepareInputForBookSearch(String mKey,String mValue)
     {
@@ -69,6 +227,13 @@ public class Utility
                 mValue = "";
             else if ( mValue.isEmpty() )
                 mValue = context.getString(R.string.search_query_string_default);
+        }
+        else if (mKey.equalsIgnoreCase(context.getString(R.string.isbn_label)))
+        {
+            if ( mValue == null )
+                mValue = "0";
+            else if ( mValue.isEmpty() )
+                mValue = context.getString(R.string.book_isbn_default);
         }
         else if (mKey.equalsIgnoreCase(context.getString(R.string.book_id_label)))
         {
@@ -403,6 +568,14 @@ public class Utility
         searchQueryUri.appendPath(mSearchQuery);
         //return makeNetworkApiCall(searchQueryUri.toString());
         return searchQueryUri.toString();
+    }
+
+    private String getWebApiUriString(String isbnLabel, String isbn)
+    {
+        Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
+        IsbnQueryUri.appendQueryParameter("q", isbn);
+        IsbnQueryUri.appendQueryParameter("type","isbn");
+        return IsbnQueryUri.toString();
     }
 
     private String makeNetworkApiCall(String ITEbooksInfoUrl)

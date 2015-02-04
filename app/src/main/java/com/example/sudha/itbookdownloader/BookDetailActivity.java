@@ -30,6 +30,7 @@ public class BookDetailActivity extends ActionBarActivity
 
     private static final String BOOK_ID_LABEL = "BookId";
     public static String BookId;
+    public static String BookIsbnFromList;
     //private static String DefaultBookId = "0";
 
 
@@ -185,9 +186,10 @@ public class BookDetailActivity extends ActionBarActivity
             Bundle bundleArguments = getArguments();
             if (bundleArguments != null)
             {
+                BookIsbnFromList = bundleArguments.getString(getString(R.string.isbn_label));
                 BookId = bundleArguments.getString(getString(R.string.book_id_label));
             }
-            fetchBookIdDetails(BookId);
+            fetchBookIdDetails(BookIsbnFromList, BookId);
             View rootView = inflater.inflate(R.layout.fragment_book_detail, container, false);
 
             DetailBookImageView = (ImageView) rootView.findViewById(R.id.detail_book_image_view);
@@ -203,12 +205,12 @@ public class BookDetailActivity extends ActionBarActivity
             return rootView;
         }
 
-        private void fetchBookIdDetails(String bookId)
+        private void fetchBookIdDetails(String mBookIsbnFromList,String mBookId)
         {
             Log.d(LOG_TAG,"BookDetailsFragment fetchBookIdDetails : ");
             FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
             fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
-            fetchBooksInfoAsyncTask.execute(null, bookId);
+            fetchBooksInfoAsyncTask.execute(null, mBookIsbnFromList, mBookId);
         }
 
         @Override

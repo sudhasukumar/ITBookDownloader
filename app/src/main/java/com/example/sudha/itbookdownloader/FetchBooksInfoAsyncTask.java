@@ -10,7 +10,9 @@ import android.util.Log;
 public class FetchBooksInfoAsyncTask extends AsyncTask<String, Void, String>
 {
     public static final String LOG_TAG = FetchBooksInfoAsyncTask.class.getSimpleName();
-
+    public static final int SEARCH_QUERY = 0;
+    public static final int ISBN = 1;
+    public static final int BOOK_ID = 2;
     public  FetchBooksForSearchQueryListener asyncResponseDelegate = null;
     private Context                          context               = null;
 
@@ -26,7 +28,7 @@ public class FetchBooksInfoAsyncTask extends AsyncTask<String, Void, String>
         Utility utility = new Utility(context);
         try
         {
-            utility.prepareInputForAsyncTask(params[0], params[1]);
+            utility.prepareInputForAsyncTask(params[SEARCH_QUERY], params[ISBN], params[BOOK_ID]);
         }
         catch ( Exception e )
         {

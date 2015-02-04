@@ -48,6 +48,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_gravity="end">
+
                         <TextView
                             android:id="@+id/list_item_book_ISBN_textview_label"
                             android:layout_width="wrap_content"
@@ -56,6 +57,7 @@
                             android:fontFamily="sans-serif-condensed"
                             android:textAppearance="?android:textAppearanceSmall"
                         />
+
                         <TextView
                             android:id="@+id/list_item_book_ISBN_textview"
                             android:layout_width="wrap_content"
