@@ -17,22 +17,23 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permissions required to check if there is SD card in the phone -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Permissions required for download complete notification if phone is in vibrate mode -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".BookListActivity"
             android:label="@string/title_activity_book_list"
@@ -41,7 +42,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.sudha.itbookdownloader.MainActivity" />
         </activity>
-
         <activity
             android:name=".BookDetailActivity"
             android:label="@string/title_activity_book_detail"
@@ -50,7 +50,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.sudha.itbookdownloader.BookListActivity" />
         </activity>
+        <activity
+            android:name=".OpenDownloadedBookActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_book_download"
+            android:parentActivityName=".BookDetailActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
 
+            <!-- android:theme="@android:style/Theme.NoDisplay" -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.sudha.itbookdownloader.BookDetailActivity" />
+        </activity>
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -60,17 +71,18 @@
                 android:value="com.example.sudha.itbookdownloader.MainActivity" />
         </activity>
 
-        <provider   android:authorities="com.example.sudha.itbookdownloader"
-                    android:name=".data.ITBookDownloaderProvider"
-                    android:exported="false"
-                    android:syncable="true" >
-        </provider>
+        <provider
+            android:name=".data.ITBookDownloaderProvider"
+            android:authorities="com.example.sudha.itbookdownloader"
+            android:exported="false"
+            android:syncable="true" />
 
         <!-- ITBDSyncAdapter's dummy authentication service -->
-        <service android:name=".sync.ITBDAuthenticatorService">
+        <service android:name=".sync.ITBDAuthenticatorService" >
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
@@ -80,16 +92,27 @@
         <service
             android:name=".sync.ITBDSyncService"
             android:exported="true"
-            android:process=":sync"
-            >
+            android:process=":sync" >
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
+
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <!-- The ITBD Book Download service -->
+        <service
+            android:name=".ITBookDownloadService"
+            android:enabled="true"
+            android:exported="false"
+            android:label="@string/it_book_download_service_label" >
+        </service>
+        <service
+            android:name=".MyIntentService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>

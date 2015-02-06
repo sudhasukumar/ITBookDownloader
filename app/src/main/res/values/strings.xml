@@ -14,7 +14,11 @@
     <!-- Activity Titles -->
     <string name="title_activity_book_list">Book List</string>
     <string name="title_activity_book_detail">Book Details</string>
+    <string name="title_activity_book_download">Download</string>
     <string name="action_settings">Settings</string>
+
+    <!-- Service Titles -->
+    <string name="it_book_download_service_label">IT Book Download Service</string>
 
     <!-- SyncAdapter related -->
     <string name="sync_account_type">sudha.example.com</string>
@@ -47,8 +51,24 @@
     <string name="book_isbn_default">9781449390501</string>
     <string name="book_number_website_book_search">http://www.it-ebooks.info/book/</string>
     <string name="download_button_label">Download</string>
+
+    <!--BookDownloadButtonListener.java-->
     <string name="download_dir_path">/ITBDownloader/download</string>
     <string name="referer_property_field">referer</string>
+
+    <string name="website_book_number_label">WebsiteBookNumber</string>
+    <string name="file_download_url_label">FileDownloadUrl</string>
+    <string name="file_name_label">FileName</string>
+    <string name="file_format_label">FileFormat</string>
+
+    <!--ItBookDownloadService.java-->
+    <string name="downloaded_file_url_label">DownloadedFileUrl</string>
+    <string name="itbd_notification_context_text">IT Book Downloader</string>
+    <string name="download_complete_notification_string">Download Complete</string>
+    <string name="notification_open_book_label">Open</string>
+    <string name="notification_dismiss_label">Dismiss</string>
+    <string name="itbd_big_notification_text">Book Download Complete. Do you want to open it ?</string>
+    <string name="open_book_chooser_title">Open the book with :</string>
 
 
 </resources>

@@ -68,7 +68,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 />
         </LinearLayout>
 <!--ISBN-->
@@ -93,7 +94,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 />
         </LinearLayout>
 <!--Year-->
@@ -117,7 +119,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 />
         </LinearLayout>
 <!--Page-->
@@ -141,7 +144,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 />
         </LinearLayout>
 <!--Publisher-->
@@ -165,7 +169,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:paddingLeft="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 />
         </LinearLayout>
 <!--Description-->
@@ -173,7 +178,10 @@
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+                      android:paddingTop="30dp"
+                      android:paddingBottom="30dp"
+        >
             <TextView
                 android:id="@+id/detail_book_description_textview_label"
                 android:layout_width="wrap_content"
@@ -189,6 +197,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
                 android:textAppearance="?android:textAppearanceMedium"
+
             />
         </LinearLayout>
 
@@ -204,7 +213,7 @@
             android:textColor="@color/black"
             android:layout_gravity="center_horizontal"
             android:visibility="invisible"
-            android:paddingTop="15dp"
+
 
         />
 

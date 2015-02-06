@@ -28,11 +28,9 @@ import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.B
 public class BookDetailActivity extends ActionBarActivity
 {
     private final String LOG_TAG = BookDetailActivity.class.getSimpleName();
-
-    private static final String BOOK_ID_LABEL = "BookId";
     public static String BookId;
     public static String BookIsbnFromList;
-    //private static String DefaultBookId = "0";
+
 
 
     @Override
@@ -304,6 +302,7 @@ public class BookDetailActivity extends ActionBarActivity
                 }
 
                 DetailBookDownloadButton.setOnClickListener(new BookDownloadButtonListener(getActivity(),BookTitle, BookDownloadLink, WebsiteBookNumber, FileFormat));
+                DetailBookDownloadButton.setPadding(15,15,15,15);
                 DetailBookDownloadButton.setVisibility(View.VISIBLE);
                 Log.d(LOG_TAG, " Download Button onClick Listener Should be visible now : ");
             }

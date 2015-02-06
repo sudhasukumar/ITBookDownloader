@@ -286,7 +286,7 @@ public class BookListActivity extends ActionBarActivity
 
 
 /*Intent showBookDetailIntent = new Intent(view.getContext(), BookDetailActivity.class);
-showBookDetailIntent.setType(Intent.ACTION_VIEW);
+showBookDetailIntent.setAction(Intent.ACTION_VIEW);
 showBookDetailIntent.setType("text/plain");
 showBookDetailIntent.putExtra(getActivity().getString(R.string.book_id_label), BookId);
 Log.d(LOG_TAG, "showBookDetailIntent is ready");

@@ -14,12 +14,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -577,6 +577,7 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search_url)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
         IsbnQueryUri.appendQueryParameter("q", isbn);
         IsbnQueryUri.appendQueryParameter("type","isbn");
+        Log.d(LOG_TAG, isbnLabel + " : " + isbn + " " + IsbnQueryUri.toString());
         return IsbnQueryUri.toString();
     }
 
@@ -605,14 +606,10 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
                 }
             }
 
-            if ( buffer.length() != 0 )
+            /*if ( buffer.length() != 0 )
             {
                 //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
-            }
-        }
-        catch ( MalformedURLException | ProtocolException e )
-        {
-            e.printStackTrace();
+            }*/
         }
         catch ( IOException e )
         {
@@ -638,64 +635,58 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
         return buffer.toString();
     }
 
-    public String makeBookDownloadNetworkApiCall(String fileDownloadUrl, String mReferrerPropertyValue)
+    String makeBookDownloadNetworkApiCall(String mFileDownloadUrl, String mWebsiteBookNumber, File BookFile)
     {
         HttpURLConnection urlConnection = null;
-        BufferedReader reader = null;
-        StringBuffer buffer = new StringBuffer();
-        String Referer = context.getString(R.string.referer_property_field);
-        String WebsiteBookRefererURL = "http://it-ebooks.info/book/" + mReferrerPropertyValue + "/";
-        URL fetchBookTaskUrl;
+        FileOutputStream BookFileOutputStream = null;
+        String DownloadStatus;
         try
         {
-            fetchBookTaskUrl = new URL(fileDownloadUrl);
+            //File output
+            BookFileOutputStream = new FileOutputStream(BookFile);
+            Log.d(LOG_TAG, " The Book is written to location : " + BookFile.getAbsolutePath());
+
+            // URL input
+            URL fetchBookTaskUrl = new URL(mFileDownloadUrl);
             urlConnection = (HttpURLConnection) fetchBookTaskUrl.openConnection();
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty(Referer, WebsiteBookRefererURL);
+            String RefererLabel = context.getString(R.string.referer_property_field);
+            String WebsiteBookRefererURL = "http://it-ebooks.info/book/" + mWebsiteBookNumber + "/";
+            urlConnection.setRequestProperty(RefererLabel, WebsiteBookRefererURL);
             urlConnection.connect();
             InputStream inputStream = urlConnection.getInputStream();
 
-            if ( inputStream != null )
+            // Read from URL and write to file
+            byte[] buffer = new byte[1024];
+            int len1 = 0;
+            while ( (len1 = inputStream.read(buffer)) > 0 )
             {
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ( (line = reader.readLine()) != null )
-                {
-                    buffer.append(line);
-                    buffer.append("\n");
-                }
+                BookFileOutputStream.write(buffer, 0, len1);
             }
-
-            if ( buffer.length() != 0 )
-            {
-                //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
-            }
+            DownloadStatus = Constants.FILE_DOWNLOAD_SUCCESS;
         }
-        catch ( MalformedURLException | ProtocolException e )
+        catch(Exception e)
         {
             e.printStackTrace();
-        }
-        catch ( IOException e )
-        {
-            e.printStackTrace();
+            DownloadStatus = Constants.FILE_DOWNLOAD_EXCEPTION;
         }
         finally
         {
             if ( urlConnection != null )
                 urlConnection.disconnect();
-
-            if ( reader != null )
+            if ( BookFileOutputStream != null )
             {
                 try
                 {
-                    reader.close();
+                    BookFileOutputStream.close();
                 }
-                catch ( final IOException e )
+                catch ( IOException e )
                 {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    e.printStackTrace();
                 }
             }
         }
-        return buffer.toString();
+        return DownloadStatus;
     }
+
 }
