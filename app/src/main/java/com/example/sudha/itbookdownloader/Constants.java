@@ -22,4 +22,7 @@ public final class Constants
     public static final String FILE_DOWNLOAD_SUCCESS   = "FILE_DOWNLOAD_SUCCESS";
     public static final String FILE_DOWNLOAD_EXCEPTION = "FILE_DOWNLOAD_EXCEPTION";
 
+    public static final String FILE_DOWNLOAD_STATUS_KEY   = "FILE_DOWNLOAD_STATUS_KEY";
+    public static final String FILE_ABSOLUTE_PATH = "FILE_ABSOLUTE_PATH";
+
 }

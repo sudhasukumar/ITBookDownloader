@@ -73,7 +73,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
     {
         CopyOnWriteArrayList<ContentValues> ContentValueArrayList;
         String BookSearchListJSONString;
-        Log.d(LOG_TAG, "Starting sync");
+        //Log.d(LOG_TAG, "Starting sync");
         //get SearchQuery or BookId from extras Bundle // BookId is cast to long for ease of method over loading to differentiate web api url formats
         String SearchQuery = extras.getString(getContext().getString(R.string.search_query_label));
         long BookId = Long.parseLong(extras.getString(getContext().getString(R.string.book_id_label)));
@@ -85,11 +85,11 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
                 SearchQuery = getContext().getString(R.string.search_query_string_default);
             }
             BookSearchListJSONString = FetchBookSearchResults(SearchQuery); //Fetch Book Search List for Search Query
-            Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + SearchQuery + " *** " + BookSearchListJSONString);
+            //Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + SearchQuery + " *** " + BookSearchListJSONString);
             if (BookSearchListJSONString.length() != 0) //When you have a list from Web Api Call
             {
                 ContentValueArrayList = getBookSearchListDataFromJson(BookSearchListJSONString, SearchQuery); //Get the Content Values from JSON
-                Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + SearchQuery);
+                //Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + SearchQuery);
                 if (!ContentValueArrayList.isEmpty())
                     storeDataInITBDProvider(ContentValueArrayList); // Initiate Bulk Insert into Books table
             }
@@ -106,13 +106,13 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
                 if (BookSearchListJSONString.length() != 0)//BookId in Books Table ...Now Fetch Author data
                 {
                     ContentValues AuthorValues = getBookIdAuthorDataFromJson(BookSearchListJSONString); //...get Authors Info from JSON
-                    Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                    //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                     if (AuthorValues.size() != 0)
                         storeDataInITBDProvider(AuthorValues,LongBookIdFromJson); //Insert the JSON info into Authors Table.
                 }
                 else //Book Id is present in Books Table But web Api call doesnt return anything
                 {
-                    Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
+                    //Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
                 }
             }
             else // The Book Id cannot be found in the Books table
@@ -134,7 +134,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
                 {
                     //Need not implement this for now because BookId is considered Private data and when the execution comes to this point means the origin of BookId is suspicious.
                     //There is no data to proceed further with that Book Id. Just Log the ID for debugging
-                    Log.d(LOG_TAG, "There is no such BookId in the Books Table and Web Api Call for : " + BookId);
+                    //Log.d(LOG_TAG, "There is no such BookId in the Books Table and Web Api Call for : " + BookId);
                 }
 
 
@@ -142,7 +142,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
 
         }
 
-        Log.d(LOG_TAG, "Completed sync");
+        //Log.d(LOG_TAG, "Completed sync");
     }
 
     private ContentValues getBookIdBookDataFromJson(String bookInfoDataJSONString)
@@ -181,12 +181,12 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
             }
             else //{"Error":"Book not found!"}
             {
-                Log.d(LOG_TAG, " getBookIdBookDataFromJson Error From Web Api Call : " + JSONError);
+                //Log.d(LOG_TAG, " getBookIdBookDataFromJson Error From Web Api Call : " + JSONError);
             }
         }
         catch (JSONException e)
         {
-            Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return BookInfoValues;
@@ -228,12 +228,12 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
             }
             else //{"Error":"Book not found!"}
             {
-                Log.d(LOG_TAG, " getBookIdAuthorDataFromJson Error From Web Api Call : " + JSONError);
+                //Log.d(LOG_TAG, " getBookIdAuthorDataFromJson Error From Web Api Call : " + JSONError);
             }
         }
         catch (JSONException e)
         {
-            Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return AuthorValues;
@@ -265,47 +265,47 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
                 mContentValueArrayList.clear();
                 ContentValues BookInfoValues = new ContentValues();
                 BooksArray = BookSearchListJsonObject.getJSONArray(JSON_BOOKS);
-                Log.d(LOG_TAG, " BooksArray : " + BooksArray.toString());
+                //Log.d(LOG_TAG, " BooksArray : " + BooksArray.toString());
                 for (int i = 0; i < BooksArray.length(); i++)
                 {
                     BookInfoValues.clear();
                     JSONObject BookInfoJsonObject = BooksArray.getJSONObject(i);
                     long BookId = Long.parseLong(BookInfoJsonObject.getString(JSON_ID));
                     BookInfoValues.put(BookEntry.COLUMN_BOOK_ID,BookId);
-                    Log.d(LOG_TAG, "*** BookId : " + BookId);
+                    //Log.d(LOG_TAG, "*** BookId : " + BookId);
 
                     String Title = BookInfoJsonObject.getString(JSON_TITLE);
                     BookInfoValues.put(BookEntry.COLUMN_TITLE,Title);
-                    Log.d(LOG_TAG, " Title : " + Title);
+                    //Log.d(LOG_TAG, " Title : " + Title);
 
                     String Subtitle = BookInfoJsonObject.getString(JSON_SUBTITLE);
                     BookInfoValues.put(BookEntry.COLUMN_SUBTITLE,Subtitle);
-                    Log.d(LOG_TAG, " Subtitle : " + Subtitle);
+                    //Log.d(LOG_TAG, " Subtitle : " + Subtitle);
                     String Description = BookInfoJsonObject.getString(JSON_DESCRIPTION);
                     BookInfoValues.put(BookEntry.COLUMN_DESCRIPTION,Description);
-                    Log.d(LOG_TAG, " Description : " + Description);
+                    //Log.d(LOG_TAG, " Description : " + Description);
                     long ISBN = BookInfoJsonObject.getLong(JSON_ISBN);
                     BookInfoValues.put(BookEntry.COLUMN_ISBN,ISBN);
-                    Log.d(LOG_TAG, " ISBN : " + ISBN);
+                    //Log.d(LOG_TAG, " ISBN : " + ISBN);
                     String ImageLink = BookInfoJsonObject.getString(JSON_IMAGELINK);
                     BookInfoValues.put(BookEntry.COLUMN_IMAGE_LINK,ImageLink);
-                    Log.d(LOG_TAG, " ImageLink : " + ImageLink);
+                    //Log.d(LOG_TAG, " ImageLink : " + ImageLink);
                     BookInfoValues.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY,mSearchQuery);
-                    Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
+                    //Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
 
                     mContentValueArrayList.add(i,BookInfoValues);
-                    //Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
+                    ////Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
                 }
             }
             else //{"Error":"Book not found!"}
             {
-                Log.d(LOG_TAG, " getBookSearchListDataFromJson Error From Web Api Call : " + JSONError);
+                //Log.d(LOG_TAG, " getBookSearchListDataFromJson Error From Web Api Call : " + JSONError);
             }
 
         }
         catch (JSONException e)
         {
-            Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return mContentValueArrayList;
@@ -316,13 +316,13 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
     {
         ContentValues[] myCV = new ContentValues[RESULTS_PER_PAGE];
         int rowCount = getContext().getContentResolver().bulkInsert(BookEntry.BOOKS_CONTENT_URI,contentValueArrayList.toArray(myCV));
-        Log.d(LOG_TAG, "BulkInsert done for row count : " + rowCount);
+        //Log.d(LOG_TAG, "BulkInsert done for row count : " + rowCount);
     }
 
     private void storeDataInITBDProvider(ContentValues mContentValues, long longBookId) // This method is overloaded
     {
         Uri AuthorInsertUri = getContext().getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(longBookId), mContentValues);
-        Log.d(LOG_TAG, "Author Insert complete for URI : " + AuthorInsertUri);
+        //Log.d(LOG_TAG, "Author Insert complete for URI : " + AuthorInsertUri);
     }
 
     private String FetchBookSearchResults(long mBookId)
@@ -368,7 +368,7 @@ public class ITBDSyncAdapter extends AbstractThreadedSyncAdapter
 
             if (buffer.length() != 0)
             {
-                Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
+                //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
             }
         }
         catch (MalformedURLException | ProtocolException e)

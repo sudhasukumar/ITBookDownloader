@@ -4,20 +4,23 @@
               android:layout_width="match_parent"
               android:layout_height="120dp"
               android:minHeight="?android:attr/listPreferredItemHeight"
-              android:background="@drawable/touch_selector">
+              android:background="@drawable/list_row_selector">
 
     <FrameLayout
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:gravity="start"
+        android:gravity="center"
+        android:layout_gravity="center"
         >
-
-        <ImageView
+        <!-- Thumbnail Image -->
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/list_item_book_image_view"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/image_view_content_description_label"/>
+
+            android:contentDescription="@string/image_view_content_description_label"
+        />
 
     </FrameLayout>
 
@@ -47,7 +50,7 @@
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="end">
+                      android:layout_gravity="start">
 
                         <TextView
                             android:id="@+id/list_item_book_ISBN_textview_label"

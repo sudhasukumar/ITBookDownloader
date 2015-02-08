@@ -53,7 +53,7 @@
     <string name="download_button_label">Download</string>
 
     <!--BookDownloadButtonListener.java-->
-    <string name="download_dir_path">/ITBDownloader/download</string>
+    <string name="ITBD_download_dir_path">/ITBookDownloader</string>
     <string name="referer_property_field">referer</string>
 
     <string name="website_book_number_label">WebsiteBookNumber</string>

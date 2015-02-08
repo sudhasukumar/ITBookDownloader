@@ -49,21 +49,21 @@ public class TestProvider extends AndroidTestCase
         Uri BookInfoUri = mContext.getContentResolver().insert(BookEntry.buildBookCollectionUri(), TestBookInfoValues);
         long BookInfoBookId = ContentUris.parseId(BookInfoUri);
         assertEquals(BookInfoBookId,TestDb.TEST_BOOK_ID);
-        Log.d(LOG_TAG, "Books Insert works");
+        //Log.d(LOG_TAG, "Books Insert works");
 
         Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.BOOKS_CONTENT_URI,null,null,null,null);
         TestDb.validateCursor(BooksCursor, TestBookInfoValues,true);
-        Log.d(LOG_TAG, "Querying Books Inserted values works");
+        //Log.d(LOG_TAG, "Querying Books Inserted values works");
 
         ContentValues AuthorValues = TestDb.createAuthorValues(TestDb.TEST_BOOK_ID);
 
         Uri AuthorInsertUri = mContext.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(TestDb.TEST_BOOK_ID), AuthorValues);
         assertTrue(AuthorInsertUri != null);
-        Log.d(LOG_TAG, "Author Insert works");
+        //Log.d(LOG_TAG, "Author Insert works");
 
         Cursor AuthorCursor = mContext.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(TestDb.TEST_BOOK_ID), null, null, null, null);
         TestDb.validateCursor(AuthorCursor, AuthorValues,true);
-        Log.d(LOG_TAG, "Querying Books Inserted values works");
+        //Log.d(LOG_TAG, "Querying Books Inserted values works");
 
         // Add the Author values in with the Book data so that we can make sure that the join worked and we actually get all the values back
         addAllContentValues(TestBookInfoValues, AuthorValues);
@@ -110,10 +110,10 @@ public class TestProvider extends AndroidTestCase
         testContentValueArrayList.add(0,TestDbBookInfoValues);
         testContentValueArrayList.add(1,BookInfoValues);
         int rowCount = mContext.getContentResolver().bulkInsert(BookEntry.BOOKS_CONTENT_URI,testContentValueArrayList.toArray(myCV));
-        Log.d(LOG_TAG, "BulkInsert works");
+        //Log.d(LOG_TAG, "BulkInsert works");
         Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.BOOKS_CONTENT_URI,null,null,null,null);
         assertEquals(rowCount, BooksCursor.getCount());
-        Log.d(LOG_TAG, "Querying BulkInsert Count works");
+        //Log.d(LOG_TAG, "Querying BulkInsert Count works");
 
     }
 
@@ -125,11 +125,11 @@ public class TestProvider extends AndroidTestCase
         Uri BookInfoUri = mContext.getContentResolver().insert(BookEntry.BOOKS_CONTENT_URI, TestBookInfoValues);
         long BookInfoBookId = ContentUris.parseId(BookInfoUri);
         assertEquals(BookInfoBookId,TestDb.TEST_BOOK_ID);
-        Log.d(LOG_TAG, "Books Insert works");
+        //Log.d(LOG_TAG, "Books Insert works");
 
         Cursor BooksCursor = mContext.getContentResolver().query(BookEntry.buildBookSearchUriForSearchQuery("PHP"),null,null,null,null);
         TestDb.validateCursor(BooksCursor, TestBookInfoValues,true);
-        Log.d(LOG_TAG, "Querying Books with Search Query value works");
+        //Log.d(LOG_TAG, "Querying Books with Search Query value works");
 
     }
     public void testGetType()

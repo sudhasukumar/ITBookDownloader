@@ -17,7 +17,7 @@ public class ITBDSyncService extends Service
     @Override
     public void onCreate()
     {
-        Log.d(LOG_TAG, "ITBDSyncService created");
+        //Log.d(LOG_TAG, "ITBDSyncService created");
         synchronized (sSyncAdapterLock)
         {
             if (itbdSyncAdapter == null)
@@ -30,7 +30,7 @@ public class ITBDSyncService extends Service
     @Override
     public IBinder onBind(Intent intent)
     {
-        Log.d(LOG_TAG, "ITBDSyncService onBind");
+        //Log.d(LOG_TAG, "ITBDSyncService onBind");
         return itbdSyncAdapter.getSyncAdapterBinder();
     }
 }

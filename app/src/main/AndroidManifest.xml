@@ -9,10 +9,10 @@
     <!-- This permission is necessary in order for ITBD to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Permissions required by the sync adapter -->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <!--<uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />-->
     <!-- Required because we're manually creating a new account. -->
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+   <!-- <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />-->
     <!-- Permissions required to write the downloaded file to SD card -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Permissions required to check if there is SD card in the phone -->
@@ -109,10 +109,7 @@
             android:exported="false"
             android:label="@string/it_book_download_service_label" >
         </service>
-        <service
-            android:name=".MyIntentService"
-            android:exported="false" >
-        </service>
+
     </application>
 
 </manifest>

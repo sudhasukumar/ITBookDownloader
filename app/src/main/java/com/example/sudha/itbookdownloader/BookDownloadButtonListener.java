@@ -12,7 +12,7 @@ import android.widget.Toast;
  */
 public class BookDownloadButtonListener implements View.OnClickListener
 {
-    private static String LOG_TAG         = BookDownloadButtonListener.class.getSimpleName();
+    //private static String LOG_TAG         = BookDownloadButtonListener.class.getSimpleName();
     private static String FileName        = "ITBDDownloadedFile.pdf";
     private static String FileDownloadUrl = "http://filepi.com/i/vCDduoE";
     private static String  WebsiteBookNumber;
@@ -46,7 +46,7 @@ public class BookDownloadButtonListener implements View.OnClickListener
             BookDownloadServiceIntent.putExtra(context.getString(R.string.file_download_url_label), FileDownloadUrl);
             BookDownloadServiceIntent.putExtra(context.getString(R.string.file_name_label), FileName);
             BookDownloadServiceIntent.putExtra(context.getString(R.string.file_format_label), FileFormat);
-            Log.d(LOG_TAG, "BookDownloadServiceIntent is ready");
+            //Log.d(LOG_TAG, "BookDownloadServiceIntent is ready");
             context.startService(BookDownloadServiceIntent);
         }
         else
@@ -76,7 +76,7 @@ public class BookDownloadButtonListener implements View.OnClickListener
                 mExternalStorageAvailable = mExternalStorageWriteable = false;  // Can't read or write
                 break;
         }
-        Log.d(LOG_TAG, "External Media: readable = " + mExternalStorageAvailable + " writable = " + mExternalStorageWriteable);
+        //Log.d(LOG_TAG, "External Media: readable = " + mExternalStorageAvailable + " writable = " + mExternalStorageWriteable);
     }
 
 }

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 import com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.AuthorEntry;
 import com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.BookEntry;
@@ -38,7 +37,7 @@ public class TestDb extends AndroidTestCase
         ContentValues BookInfoValues = createBookInfoValues();
         long BookInfoRowId = Db.insert(BookEntry.TABLE_NAME, null, BookInfoValues);
         assertTrue(BookInfoRowId != -1);
-        Log.d(LOG_TAG, "New Book Info table insert row id: " + BookInfoRowId);
+        //Log.d(LOG_TAG, "New Book Info table insert row id: " + BookInfoRowId);
 
         Cursor BookInfoCursor = Db.query(BookEntry.TABLE_NAME,null,null,null,null,null,null);
         validateCursor(BookInfoCursor, BookInfoValues, false);
@@ -46,7 +45,7 @@ public class TestDb extends AndroidTestCase
         ContentValues AuthorValues = createAuthorValues(TEST_BOOK_ID);
         long AuthorRowId = Db.insert(AuthorEntry.TABLE_NAME, null, AuthorValues);
         assertTrue(AuthorRowId != -1);
-        Log.d(LOG_TAG, "New Author table insert row id: " + AuthorRowId);
+        //Log.d(LOG_TAG, "New Author table insert row id: " + AuthorRowId);
 
         Cursor AuthorCursor = Db.query(AuthorEntry.TABLE_NAME,null,null,null,null,null,null);
         validateCursor(AuthorCursor, AuthorValues, false);

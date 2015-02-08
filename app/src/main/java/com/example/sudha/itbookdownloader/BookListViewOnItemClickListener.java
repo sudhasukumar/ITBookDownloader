@@ -18,7 +18,7 @@ public class BookListViewOnItemClickListener implements android.widget.AdapterVi
         Toast bookDetailsForItemClick = Toast.makeText(parent.getContext(),"Book Details",Toast.LENGTH_SHORT );
         bookDetailsForItemClick.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         bookDetailsForItemClick.show();
-        Log.d(LOG_TAG, "Toast is shown");
+        //Log.d(LOG_TAG, "Toast is shown");
 
     }
 

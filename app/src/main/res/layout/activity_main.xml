@@ -5,6 +5,7 @@
              android:layout_height="match_parent"
              tools:context=".MainActivity"
              tools:ignore="MergeRootFrame"
+             android:background="@drawable/itbdbg"
              >
     <!--android:background="@drawable/itbdbg"-->
 

@@ -7,16 +7,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.HashMap;
 
 // An IntentService subclass for handling asynchronous download requests in a service on a separate handler thread.
 public class ITBookDownloadService extends IntentService
 {
-    private static String LOG_TAG = BookDownloadButtonListener.class.getSimpleName();
+    //private static String LOG_TAG = ITBookDownloadService.class.getSimpleName();
 
     Notification.Builder builder;
 
@@ -64,16 +63,22 @@ public class ITBookDownloadService extends IntentService
     //  Handle action Download in the provided background thread with the provided parameters.
     private void handleActionDownload(String mFileDownloadUrl, String mWebsiteBookNumber, String mFileName, String mFileFormat)
     {
-
-        File SdCard = Environment.getExternalStorageDirectory();
-        String DirectoryName = SdCard.getAbsolutePath() + this.getString(R.string.download_dir_path);
-        String FileName = mFileName + "." + mFileFormat.toLowerCase();
-        File BookFile = new File(DirectoryName,FileName);
+        HashMap<String,String> FileDownloadResults;
 
         Utility utility = new Utility(this);
-        String DownloadStatus = utility.makeBookDownloadNetworkApiCall(mFileDownloadUrl, mWebsiteBookNumber, BookFile);
-        if (DownloadStatus.equals(Constants.FILE_DOWNLOAD_SUCCESS))
-            startActionDownloadComplete(this,BookFile.getAbsolutePath());
+        FileDownloadResults = utility.makeBookDownloadNetworkApiCall(mFileDownloadUrl, mWebsiteBookNumber, mFileName, mFileFormat);
+        if (FileDownloadResults.get(Constants.FILE_DOWNLOAD_STATUS_KEY).equals(Constants.FILE_DOWNLOAD_SUCCESS))
+        {
+            String BookFilePath = FileDownloadResults.get(Constants.FILE_ABSOLUTE_PATH);
+            if ( !BookFilePath.equals("") )
+                startActionDownloadComplete(this,BookFilePath);
+        }
+        else
+        {
+            Toast UnableToDownloadFileToast = Toast.makeText(this," Unable to downloaded file ",Toast.LENGTH_LONG);
+            UnableToDownloadFileToast.show();
+        }
+
     }
 
     public static void startActionDownloadComplete(Context context, String mDownloadedFileUrl)
@@ -95,11 +100,11 @@ public class ITBookDownloadService extends IntentService
         DismissNotificationIntent.setAction(Constants.ACTION_NOTIFICATION_DISMISS);
         PendingIntent PendingDismissIntent = PendingIntent.getService(this, 0, DismissNotificationIntent, 0);
 
-        Intent OpenBookFromNotificationIntent = new Intent(this, OpenDownloadedBookActivity.class);
+        Intent OpenBookFromNotificationIntent = new Intent(this, ITBookDownloadService.class);
         OpenBookFromNotificationIntent.setAction(Constants.ACTION_OPEN_DOWNLOADED_BOOK);
-        OpenBookFromNotificationIntent.setType("text/plain");
+        //OpenBookFromNotificationIntent.setType("text/plain");
         OpenBookFromNotificationIntent.putExtra(this.getString(R.string.downloaded_file_url_label), mDownloadedFileUrl);
-        Log.d(LOG_TAG, "OpenDownloadedBookIntent is ready");
+        //Log.d(LOG_TAG, "OpenDownloadedBookIntent is ready");
         PendingIntent PendingOpenDocIntent = PendingIntent.getService(this, 0, OpenBookFromNotificationIntent, 0);
 
         // Constructs the Builder object.Sets the big view "big text" style and supplies the text that will be displayed in the detail area of the expanded notification.
@@ -123,13 +128,14 @@ public class ITBookDownloadService extends IntentService
             Uri pdfUri = Uri.parse(downloadedFileUrl);
             Intent ChooseApplicationsToOpenBookIntent = new Intent(Intent.ACTION_VIEW);
             ChooseApplicationsToOpenBookIntent.setDataAndType(pdfUri, "application/pdf");
-            ChooseApplicationsToOpenBookIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(ChooseApplicationsToOpenBookIntent);
+            /*ChooseApplicationsToOpenBookIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             String title = getResources().getString(R.string.open_book_chooser_title);        // Always use string resources for UI text. This says something like "Share this photo with"
             Intent chooser = Intent.createChooser(ChooseApplicationsToOpenBookIntent, title);        // Create intent to show chooser
             if ( ChooseApplicationsToOpenBookIntent.resolveActivity(getPackageManager()) != null )         // Verify the intent will resolve to at least one activity
             {
                 startActivity(chooser);
-            }
+            }*/
         }
         else
         {

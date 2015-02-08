@@ -68,7 +68,7 @@ public class MainActivity extends ActionBarActivity
             /*startSearchView.setOnQueryTextFocusChangeListener(startSearchListener);
             startSearchView.setOnSuggestionListener(startSearchListener);
             startSearchView.setOnClickListener(startSearchListener);*/
-            Log.d(LOG_TAG, "StartSearchListener is set");
+            //Log.d(LOG_TAG, "StartSearchListener is set");
             return rootView;
         }
     }

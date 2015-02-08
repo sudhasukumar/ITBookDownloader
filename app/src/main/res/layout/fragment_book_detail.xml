@@ -13,12 +13,13 @@
         android:padding="15dp" >
 
 <!--Book Image-->
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/detail_book_image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
         android:contentDescription="@string/image_view_content_description_label"
-        android:padding="15dp"/>
+    />
 
 <!--Book Title-->
     <TextView
@@ -42,9 +43,6 @@
         android:textColor="@color/black"
         android:padding="15dp"
     />
-        <!--android:fontFamily="sans-serif-condensed"
-        android:textColor="@color/black"
-        android:textSize="20sp"-->
 
 <!--Author-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,7 +50,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_gravity="start"
-            >
+        >
             <TextView
                 android:id="@+id/detail_book_author_textview_label"
                 android:layout_width="wrap_content"
@@ -70,7 +68,8 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                />
+                android:gravity="center"
+            />
         </LinearLayout>
 <!--ISBN-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -78,7 +77,7 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_gravity="start"
-            >
+        >
             <TextView
                 android:id="@+id/detail_book_ISBN_textview_label"
                 android:layout_width="wrap_content"
@@ -96,14 +95,16 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                />
+                android:gravity="center"
+            />
         </LinearLayout>
 <!--Year-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+        >
             <TextView
                 android:id="@+id/detail_book_year_textview_label"
                 android:layout_width="wrap_content"
@@ -121,14 +122,16 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                />
+                android:gravity="center"
+            />
         </LinearLayout>
 <!--Page-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+        >
             <TextView
                 android:id="@+id/detail_book_page_textview_label"
                 android:layout_width="wrap_content"
@@ -146,14 +149,16 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                />
+                android:gravity="center"
+            />
         </LinearLayout>
 <!--Publisher-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+        >
             <TextView
                 android:id="@+id/detail_book_publisher_textview_label"
                 android:layout_width="wrap_content"
@@ -171,7 +176,8 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                />
+                android:gravity="center"
+            />
         </LinearLayout>
 <!--Description-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -209,11 +215,10 @@
             android:fontFamily="sans-serif-condensed"
             android:textAppearance="?android:textAppearanceMedium"
             android:padding="15dp"
-            android:background="@color/ITBD_dark_orange"
             android:textColor="@color/black"
             android:layout_gravity="center_horizontal"
             android:visibility="invisible"
-
+            android:background="@drawable/ic_orange_square_button"
 
         />
 

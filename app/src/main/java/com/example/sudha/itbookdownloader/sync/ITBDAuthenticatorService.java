@@ -15,19 +15,19 @@ public class ITBDAuthenticatorService extends Service
     @Override
     public void onCreate()
     {
-        Log.d(LOG_TAG, "ITBDAuthenticatorService created");
+        //Log.d(LOG_TAG, "ITBDAuthenticatorService created");
         itbdAuthenticator = new ITBDAuthenticator(this); // Create a new authenticator object
     }
 
     @Override
     public void onDestroy()
     {
-        Log.d(LOG_TAG, "ITBDAuthenticatorService destroyed");
+        //Log.d(LOG_TAG, "ITBDAuthenticatorService destroyed");
     }
     @Override //When the system binds to this Service to make the RPC call return the authenticator's IBinder.
     public IBinder onBind(Intent intent)
     {
-        Log.d(LOG_TAG, "ITBDAuthenticatorService onBind");
+        //Log.d(LOG_TAG, "ITBDAuthenticatorService onBind");
         return null;
     }
 }

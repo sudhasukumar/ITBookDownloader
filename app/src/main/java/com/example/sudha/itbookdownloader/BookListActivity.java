@@ -11,7 +11,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,7 +51,7 @@ public class BookListActivity extends ActionBarActivity
                 String SearchQueryLabel = this.getString(R.string.search_query_label);
                 SearchQuery = bundle.getString(SearchQueryLabel);
                 DefaultSearchQuery = this.getString(R.string.search_query_string_default);
-                Log.d(LOG_TAG, "Received Search Query from the Intent : " + SearchQuery);
+                //Log.d(LOG_TAG, "Received Search Query from the Intent : " + SearchQuery);
                 bookListFragment.setArguments(bundle); //passing the search query in bundle to fragment to process
             }
 
@@ -85,12 +84,9 @@ public class BookListActivity extends ActionBarActivity
             showBookDetailIntent.putExtra(BookIdLabel, BookId);
             String IsbnLabel = this.getString(R.string.isbn_label);
             showBookDetailIntent.putExtra(IsbnLabel, ISBN);
-            Log.d(LOG_TAG, "showBookDetailIntent is ready");
+            //Log.d(LOG_TAG, "showBookDetailIntent is ready");
             startActivity(showBookDetailIntent);
-            /*Intent ViewBookDetailIntent = new Intent(this, BookDetailActivity.class).putExtra(BookDetailActivity.BookId, BookId);
-            ViewBookDetailIntent.setAction(Intent.ACTION_VIEW);
-            startActivity(ViewBookDetailIntent);*/
-        }
+         }
     }
 
     @Override
@@ -148,14 +144,14 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
-            Log.d(LOG_TAG,"BookListFragment onCreate : ");
+            //Log.d(LOG_TAG,"BookListFragment onCreate : ");
             super.onCreate(savedInstanceState);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            Log.d(LOG_TAG,"BookListFragment onCreateView : ");
+            //Log.d(LOG_TAG,"BookListFragment onCreateView : ");
             mITBDBookSearchAdapter = new ITBDBookSearchAdapter(getActivity(), null, 0);
             View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
             BookListView = (ListView) rootView.findViewById(R.id.listview_book_search);
@@ -174,7 +170,7 @@ public class BookListActivity extends ActionBarActivity
                                                                     ISBN = cursor.getString(COL_ISBN);
                                                                     BookId = cursor.getString(COL_ID);
 
-                                                                    Log.d(LOG_TAG, " The Chosen Book ID is : " + BookId + " The Chosen Book ISBN is : " + ISBN);
+                                                                    //Log.d(LOG_TAG, " The Chosen Book ID is : " + BookId + " The Chosen Book ISBN is : " + ISBN);
                                                                     if (cursor.moveToPosition(position))
                                                                     {
                                                                         Activity myBookListActivity = getActivity();
@@ -208,13 +204,14 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public void onFetchBooksForSearchQuery(String result)
         {
-            Log.d(LOG_TAG, "Check if Data has changed in List view " + result);
+            //Log.d(LOG_TAG, "Check if Data has changed in List view " + result);
+            mITBDBookSearchAdapter.notifyDataSetChanged();
         }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState)
         {
-            Log.d(LOG_TAG,"BookListFragment onActivityCreated : ");
+            //Log.d(LOG_TAG,"BookListFragment onActivityCreated : ");
             // Initialise Loader here...Loader's lifecycle is bound to Activity Lifecycle not Fragment
             getLoaderManager().initLoader(BOOK_SEARCH_LOADER, null, this);
             super.onActivityCreated(savedInstanceState);
@@ -224,20 +221,20 @@ public class BookListActivity extends ActionBarActivity
         public void onStop()
         {
             super.onStop();
-            Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : " + BookId);
+            //Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : " + BookId);
         }
 
         @Override
         public void onStart()
         {
             super.onStart();
-            Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : "  + BookId);
+            //Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : "  + BookId);
         }
 
         @Override
         public void onResume()
         {
-            Log.d(LOG_TAG,"BookListFragment onResume : ");
+            //Log.d(LOG_TAG,"BookListFragment onResume : ");
             super.onResume();
             if ((SearchQuery != null) && (SearchQuery.equals(DefaultSearchQuery))) //&& !mLocation.equals(Utility.getPreferredLocation(getActivity())))
             {
@@ -249,7 +246,7 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public void onSaveInstanceState(Bundle outState)
         {
-            Log.d(LOG_TAG,"BookListFragment onSaveInstanceState : ");
+            //Log.d(LOG_TAG,"BookListFragment onSaveInstanceState : ");
             // When tablets rotate, the currently selected list item needs to be saved. When no item is selected, mPosition will be set to Listview.INVALID_POSITION, so check for that before storing.
             if (USER_LIST_VIEW_POSITION != ListView.INVALID_POSITION)
             {
@@ -289,5 +286,5 @@ public class BookListActivity extends ActionBarActivity
 showBookDetailIntent.setAction(Intent.ACTION_VIEW);
 showBookDetailIntent.setType("text/plain");
 showBookDetailIntent.putExtra(getActivity().getString(R.string.book_id_label), BookId);
-Log.d(LOG_TAG, "showBookDetailIntent is ready");
+//Log.d(LOG_TAG, "showBookDetailIntent is ready");
 view.getContext().startActivity(showBookDetailIntent);*/
