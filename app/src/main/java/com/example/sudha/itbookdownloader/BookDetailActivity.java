@@ -285,7 +285,7 @@ public class BookDetailActivity extends ActionBarActivity
 
                 String BookImageLink = cursorData.getString(COLUMN_IMAGE_LINK);
                 MyVolley.init(getActivity().getApplicationContext()); // we need application context to make it a singleton
-                MyVolley.getRequestQueue().getCache().invalidate(BookImageLink, true);
+                //MyVolley.getRequestQueue().getCache().invalidate(BookImageLink, true);
                 ImageLoader mImageLoader = MyVolley.getImageLoader();
                 DetailBookImageView.setImageUrl(BookImageLink, mImageLoader);
                 DetailBookImageView.setContentDescription(BookImageLink);

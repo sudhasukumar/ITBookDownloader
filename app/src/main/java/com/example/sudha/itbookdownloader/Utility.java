@@ -42,11 +42,6 @@ public class Utility
         this.context = context;
     }
 
-    /*protected static int getArtResourceForBookCover(String mImageLink)
-    {
-        return 0;
-    }
-*/
     protected void prepareInputForAsyncTask(String mSearchQuery, String mIsbn, String mBookId)
     {
         String searchQuery = prepareInputForBookSearch(context.getString(R.string.search_query_label),mSearchQuery);
@@ -89,7 +84,9 @@ public class Utility
             {
                 ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString, mIsbn , mBookId , mWebsiteBookNumber); //...get Authors Info from WebsiteBookNumber HTML Doc
                 ////Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
-                if ( AuthorValues.size() != 0 )
+                Cursor AuthorsBookIdCursor = context.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(BookId), new String[]{BookEntry._ID}, null, null, null);
+                int AuthorsBookIdCursorCount = AuthorsBookIdCursor.getCount();
+                if (( AuthorValues.size() != 0 )&&(AuthorsBookIdCursorCount == 0))
                     storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
             else //Book Id is present in Books Table But web Api call doesnt return anything
@@ -101,58 +98,7 @@ public class Utility
 
     private ContentValues getWebsiteBookNumberAuthorData(String mBookSearchListJSONString, String mIsbn, String mBookId, String mWebsiteBookNumber)
     {
-/*<td class="justify link">
-<h4>Book Description</h4>
-<span itemprop="description">Want to add more interactivity and polish to your websites? Discover how <a href="/tag/jquery/" title="jQuery eBooks">jQuery</a> can help you build complex scripting functionality in just a few lines of code. With Head First jQuery, you'll quickly get up to speed on this amazing <a href="/tag/javascript/" title="JavaScript eBooks">JavaScript</a> library by learning how to navigate <a href="/tag/html/" title="HTML eBooks">HTML</a> documents while handling events, effects, callbacks, and animations. By the time you've completed the book, you'll be incorporating Ajax apps, working seamlessly with HTML and CSS, and handling data with PHP, MySQL and JSON.<br />
-<br />
-If you want to learn - and understand - how to create interactive web pages, unobtrusive script, and cool animations that don't kill your browser, this book is for you.</span>
-<table width="100%">
-<tr><td colspan="2"><h4>Book Details</h4></td></tr>
-<tr><td width="150">Publisher:</td><td><b><a href="/publisher/3/" title="O'Reilly Media eBooks" itemprop="publisher">O'Reilly Media</a></b></td></tr>
-<tr><td>By:</td><td><b itemprop="author" style="display:none;">Ryan Benedetti, Ronan Cranley</b><b><a href='/author/1229/' title='Ryan Benedetti'>Ryan Benedetti</a>, <a href='/author/1221/' title='Ronan Cranley'>Ronan Cranley</a></b></td></tr>
-<tr><td>ISBN:</td><td><b itemprop="isbn">978-1-4493-9321-2</b></td></tr>
-<tr><td>Year:</td><td><b itemprop="datePublished">2011</b></td></tr>
-<tr><td>Pages:</td><td><b itemprop="numberOfPages">544</b></td></tr>
-<tr><td>Language:</td><td><b itemprop="inLanguage">English</b></td></tr>
-<tr><td>File size:</td><td><b>68.9 MB</b></td></tr>
-<tr><td>File format:</td><td><b itemprop="bookFormat">PDF</b></td></tr>
-<tr><td colspan="2"><h4>eBook</h4></td></tr>
-<tr><td>Download:</td><td><a href='http://filepi.com/i/VZeYTsV'>Head First jQuery</a></td></tr>
-<tr><td colspan="2"><h4>Paper Book</h4></td></tr>
-<tr><td>Buy:</td><td><a href="http://isbn.directory/book/978-1-4493-9321-2" target="_blank">Head First jQuery</a></td></tr>
 
-<tr><td colspan="2"><br><br></td></tr>
-<tr><td colspan="2">
-
-<div class="soc1"><g:plusone size="medium"></g:plusone></div>
-<div class="soc2"><a href="http://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="ITeBooks">Tweet</a><script async type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div>
-<div class="soc3"><div id="fb-root"></div><script async src="http://connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="" send="false" layout="button_count" width="450" show_faces="true" action="like" font="tahoma"></fb:like></div>
-
-</td></tr>
-
-<tr><td colspan="2"><br><br></td></tr>
-<tr><td colspan="2"><h4>Related Books</h4></td></tr>
-<tr><td colspan="2">
-<table><tr valign="top" align="center">
-<td width='166'><a href='/book/102/' title='Head First SQL' style='border:0'><img src='/images/ebooks/3/head_first_sql.jpg' alt='Head First SQL' width='150' class='border'></a><br>
-<a href='/book/102/' title='Head First SQL' style='border:0'>Head First SQL</a>
-</td><td width='166'><a href='/book/103/' title='Head First JavaScript' style='border:0'><img src='/images/ebooks/3/head_first_javascript.jpg' alt='Head First JavaScript' width='150' class='border'></a><br>
-<a href='/book/103/' title='Head First JavaScript' style='border:0'>Head First JavaScript</a>
-</td><td width='166'><a href='/book/217/' title='Head First PHP & MySQL' style='border:0'><img src='/images/ebooks/3/head_first_php__mysql.jpg' alt='Head First PHP & MySQL' width='150' class='border'></a><br>
-<a href='/book/217/' title='Head First PHP & MySQL' style='border:0'>Head First PHP & MySQL</a>
-</td>   </tr></table>
-</td></tr>
-
-</table>
-
-</td>
-
-/*
-.getElementsByTag("h1").text();
-Elements getElementsByAttributeValueMatching(String key, Pattern pattern)
-el.select("a[href*=example.com]")
-Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-java-jsoup-example.html#ixzz3Qj7TwGOP
-*/
         ContentValues AuthorValues = new ContentValues();
 
         try
@@ -160,7 +106,6 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
             Document BookIdDocument = Jsoup.parse(mBookSearchListJSONString);
             Element BookIdDocumentBody = BookIdDocument.body();
             Element TdJustifyLinkElement = BookIdDocumentBody.getElementsByClass("justify").first();
-            //Elements TdJustify = BookIdDocumentBody.select("td[class^=justify]");
             String BookDescription = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "description").first().text();
             ////Log.d(LOG_TAG, "Book Description : " + BookDescription);
             updateBookDescriptionInITBDProvider(mBookId,BookDescription); //update the new description
@@ -215,10 +160,6 @@ Read more: http://javarevisited.blogspot.com/2014/09/how-to-parse-html-file-in-j
 
     private String getWebsiteBookNumber(String bookISBNSearchHTMLString)
     {
-        /*String patternToMatch = "<a href=\"/book/";
-        int startIndex = bookISBNSearchHTMLString.indexOf(patternToMatch);
-        String WebsiteBookNumber = bookISBNSearchHTMLString.substring(startIndex+15, startIndex+19);
-        return WebsiteBookNumber;*/
         String WebsiteBookNumber = Jsoup.parse(bookISBNSearchHTMLString).select("a[href*=/book/]").first().attr("href");
         String[] WebsiteBookNumberArray = WebsiteBookNumber.split("/"); //(6,10);
         WebsiteBookNumber = WebsiteBookNumberArray[2];
