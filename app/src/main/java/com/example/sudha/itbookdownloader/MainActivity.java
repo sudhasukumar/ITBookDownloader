@@ -1,5 +1,6 @@
 package com.example.sudha.itbookdownloader;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity
@@ -60,6 +62,23 @@ public class MainActivity extends ActionBarActivity
         {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             startSearchView = (SearchView) rootView.findViewById(R.id.startSearchView);
+
+
+            int searchPlateId = startSearchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
+            View searchPlate = startSearchView.findViewById(searchPlateId);
+            if (searchPlate!=null)
+            {
+                searchPlate.setBackgroundColor(Color.LTGRAY);
+                int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+                TextView searchText = (TextView) searchPlate.findViewById(searchTextId);
+                if (searchText!=null)
+                {
+                    searchText.setTextColor(Color.BLACK);
+                    searchText.setHintTextColor(Color.BLACK);
+                }
+            }
+
+
             StartSearchListener startSearchListener = new StartSearchListener(getActivity());
             startSearchView.setOnQueryTextListener(startSearchListener);
             /*startSearchView.setOnQueryTextFocusChangeListener(startSearchListener);

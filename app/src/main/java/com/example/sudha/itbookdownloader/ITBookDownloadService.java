@@ -129,14 +129,19 @@ public class ITBookDownloadService extends IntentService
             Uri pdfUri = Uri.parse(downloadedFileUrl);
             Intent ChooseApplicationsToOpenBookIntent = new Intent(Intent.ACTION_VIEW);
             ChooseApplicationsToOpenBookIntent.setDataAndType(pdfUri, "application/pdf");
-            startActivity(ChooseApplicationsToOpenBookIntent);
-            /*ChooseApplicationsToOpenBookIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            //startActivity(ChooseApplicationsToOpenBookIntent);
+            ChooseApplicationsToOpenBookIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             String title = getResources().getString(R.string.open_book_chooser_title);        // Always use string resources for UI text. This says something like "Share this photo with"
             Intent chooser = Intent.createChooser(ChooseApplicationsToOpenBookIntent, title);        // Create intent to show chooser
             if ( ChooseApplicationsToOpenBookIntent.resolveActivity(getPackageManager()) != null )         // Verify the intent will resolve to at least one activity
             {
                 startActivity(chooser);
-            }*/
+            }
+            else
+            {
+                Toast UnableToOpenFileToast = Toast.makeText(this," Unable to Open the downloaded PDF file ",Toast.LENGTH_LONG);
+                UnableToOpenFileToast.show();
+            }
         }
         else
         {
