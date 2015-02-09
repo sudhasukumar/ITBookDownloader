@@ -100,19 +100,19 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     private Cursor getBooksCollection(String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
-        //Log.d(LOG_TAG, "getBooksCollection : ");
+        Log.d(LOG_TAG, "getBooksCollection : ");
         return BooksTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getAuthorsCollection(String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
-        //Log.d(LOG_TAG, "getAuthorsCollection : ");
+        Log.d(LOG_TAG, "getAuthorsCollection : ");
         return AuthorsTableQueryBuilder.query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getBookInfoAndAuthorForId(Uri uri, String[] projection, String sortOrder)
     {
-        //Log.d(LOG_TAG, "getBookInfoAndAuthorForId : ");
+        Log.d(LOG_TAG, "getBookInfoAndAuthorForId : ");
         String selection = BOOKS_BOOK_ID_SELECTION;
         String BookId = BookEntry.getBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
@@ -122,7 +122,7 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     private Cursor getBooksBookIdInfo(Uri uri, String[] projection, String sortOrder)
     {
-        //Log.d(LOG_TAG, "getBookIdInfo : ");
+        Log.d(LOG_TAG, "getBookIdInfo : ");
         String selection = BOOKS_BOOK_ID_SELECTION;
         String BookId = BookEntry.getBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
@@ -132,7 +132,7 @@ public class ITBookDownloaderProvider extends ContentProvider
 
     private Cursor getAuthorsBookIdInfo(Uri uri, String[] projection, String sortOrder)
     {
-        //Log.d(LOG_TAG, "getBookIdInfo : ");
+        Log.d(LOG_TAG, "getBookIdInfo : ");
         String selection = AUTHORS_BOOK_ID_SELECTION;
         String BookId = AuthorEntry.getAuthorsBookIdFromUri(uri);
         String[] selectionArgs = new String[]{BookId};
@@ -145,7 +145,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         String selection = BOOKS_SEARCH_QUERY_SELECTION;
         String SearchQuery = BookEntry.getBookSearchQueryFromUri(uri);
         String[] selectionArgs = new String[]{"%" + SearchQuery + "%"};
-        //Log.d(LOG_TAG, "getBookCollectionForSearchQuery : " + SearchQuery);
+        Log.d(LOG_TAG, "getBookCollectionForSearchQuery : " + SearchQuery);
         BooksTableQueryBuilder.setProjectionMap(BooksProjectionMap);
         return BooksTableQueryBuilder
                        .query(DbHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, sortOrder);
@@ -156,7 +156,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     public boolean onCreate()
     {
         DbHelper = new ITBookDownloaderDbHelper(getContext());
-        //Log.d(LOG_TAG, "onCreate : ");
+        Log.d(LOG_TAG, "onCreate : ");
         return true;
     }
 
@@ -200,7 +200,7 @@ public class ITBookDownloaderProvider extends ContentProvider
                 .addURI(ITBookDownloaderContract.CONTENT_AUTHORITY, "/book/#", BOOK_ID_IN_BOOKS_AND_AUTHORS); // to query,insert,delete both books and authors table for complete book information
 
 
-        //Log.d(LOG_TAG, "buildUriMatcher : ");
+        Log.d(LOG_TAG, "buildUriMatcher : ");
         return uriMatcher;
     }
 
@@ -236,7 +236,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder)
     {
         Cursor retCursor;
-        //Log.d(LOG_TAG, "ITBookDownloaderProvider query method : ");
+        Log.d(LOG_TAG, "ITBookDownloaderProvider query method : ");
         final int match = uriMatcher.match(uri);
         switch (match)
         {
@@ -275,7 +275,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     @Override
     public Uri insert(Uri uri, ContentValues values)
     {
-        //Log.d(LOG_TAG, "insert : ");
+        Log.d(LOG_TAG, "insert : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         Uri insertedUri = uri;
@@ -302,7 +302,7 @@ public class ITBookDownloaderProvider extends ContentProvider
                 break;
 
             case BOOK_ID_IN_BOOKS_AND_AUTHORS:
-                //Log.d(LOG_TAG, "Join Insert not implemented yet : " + uri);
+                Log.d(LOG_TAG, "Join Insert not implemented yet : " + uri);
                 break;
 
             default:
@@ -323,7 +323,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         }
         catch ( Exception e )
         {
-            //Log.d(LOG_TAG, " Could Not Insert into Books Table : " + e.getMessage());
+            Log.d(LOG_TAG, " Could Not Insert into Books Table : " + e.getMessage());
             e.printStackTrace();
         }
         if ( _id > 0 )
@@ -347,7 +347,7 @@ public class ITBookDownloaderProvider extends ContentProvider
         }
         catch ( Exception e )
         {
-            //Log.d(LOG_TAG, " Could Not Insert into Authors Table : " + e.getMessage());
+            Log.d(LOG_TAG, " Could Not Insert into Authors Table : " + e.getMessage());
             e.printStackTrace();
         }
         if ( _id > 0 )
@@ -364,7 +364,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs)
     {
-        //Log.d(LOG_TAG, " delete : ");
+        Log.d(LOG_TAG, " delete : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsDeleted;
@@ -440,7 +440,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs)
     {
-        //Log.d(LOG_TAG, "update : ");
+        Log.d(LOG_TAG, "update : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         int rowsUpdated;
@@ -483,7 +483,7 @@ public class ITBookDownloaderProvider extends ContentProvider
                 break;
 
             case BOOK_ID_IN_BOOKS_AND_AUTHORS:
-                //Log.d(LOG_TAG, "BOOK_ID_IN_BOOKS_AND_AUTHORS Not Implemented yet for Update");
+                Log.d(LOG_TAG, "BOOK_ID_IN_BOOKS_AND_AUTHORS Not Implemented yet for Update");
                 rowsUpdated = 0;
                 break;
 
@@ -500,7 +500,7 @@ public class ITBookDownloaderProvider extends ContentProvider
     @Override
     public int bulkInsert(Uri uri, @NonNull ContentValues[] values)
     {
-        //Log.d(LOG_TAG, " BulkInsert : ");
+        Log.d(LOG_TAG, " BulkInsert : ");
         final SQLiteDatabase db = DbHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         switch (match)
@@ -516,7 +516,7 @@ public class ITBookDownloaderProvider extends ContentProvider
 
                         if ( _id != -1 )
                         {
-                            //Log.d(LOG_TAG, " BulkInsert : IDs inserted " + _id);
+                            Log.d(LOG_TAG, " BulkInsert : IDs inserted " + _id);
                             returnCount++;
                         }
                     }

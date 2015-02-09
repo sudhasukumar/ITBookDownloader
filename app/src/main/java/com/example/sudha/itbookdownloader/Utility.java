@@ -35,6 +35,7 @@ import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.B
 public class Utility
 {
     public static final String LOG_TAG = Utility.class.getSimpleName();
+
     private final Context context;
 
     public Utility(Context context)
@@ -83,7 +84,7 @@ public class Utility
             if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
             {
                 ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString, mIsbn , mBookId , mWebsiteBookNumber); //...get Authors Info from WebsiteBookNumber HTML Doc
-                ////Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 Cursor AuthorsBookIdCursor = context.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(BookId), new String[]{BookEntry._ID}, null, null, null);
                 int AuthorsBookIdCursorCount = AuthorsBookIdCursor.getCount();
                 if (( AuthorValues.size() != 0 )&&(AuthorsBookIdCursorCount == 0))
@@ -91,7 +92,7 @@ public class Utility
             }
             else //Book Id is present in Books Table But web Api call doesnt return anything
             {
-                //Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
+                Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
             }
         }
     }
@@ -107,21 +108,21 @@ public class Utility
             Element BookIdDocumentBody = BookIdDocument.body();
             Element TdJustifyLinkElement = BookIdDocumentBody.getElementsByClass("justify").first();
             String BookDescription = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "description").first().text();
-            ////Log.d(LOG_TAG, "Book Description : " + BookDescription);
+            //Log.d(LOG_TAG, "Book Description : " + BookDescription);
             updateBookDescriptionInITBDProvider(mBookId,BookDescription); //update the new description
 
             String AuthorName = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "author").first().text();
-            ////Log.d(LOG_TAG, "AuthorName : " + AuthorName);
+            //Log.d(LOG_TAG, "AuthorName : " + AuthorName);
             String Year = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "datePublished").first().text();
-            ////Log.d(LOG_TAG, "Published Year : " + Year);
+            //Log.d(LOG_TAG, "Published Year : " + Year);
             String Page = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "numberOfPages").first().text();
-            ////Log.d(LOG_TAG, "Page : " + Page);
+            //Log.d(LOG_TAG, "Page : " + Page);
             String Publisher = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop","publisher").first().text();
-            ////Log.d(LOG_TAG, "Publisher : " + Publisher);
+            //Log.d(LOG_TAG, "Publisher : " + Publisher);
             String BookFormat = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop","bookFormat").first().text();
-            ////Log.d(LOG_TAG, "BookFormat : " + BookFormat);
+            //Log.d(LOG_TAG, "BookFormat : " + BookFormat);
             String DownloadLink = TdJustifyLinkElement.select("a[href*=filepi.com").first().attr("href");
-            ////Log.d(LOG_TAG, "DownloadLink : " + DownloadLink);
+            //Log.d(LOG_TAG, "DownloadLink : " + DownloadLink);
 
 
             AuthorValues.put(AuthorEntry.COLUMN_BOOK_ID, mBookId);
@@ -148,7 +149,7 @@ public class Utility
         ContentValues descriptionCV = new ContentValues();
         descriptionCV.put(BookEntry.COLUMN_DESCRIPTION,bookDescription);
         context.getContentResolver().update(BookEntry.buildBooksIdUri(Long.parseLong(mBookId)), descriptionCV, null, null);
-        ////Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
+        //Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
     }
 
     private String getBookDetailsWebUri(String websiteBookNumber)
@@ -196,11 +197,11 @@ public class Utility
     protected void parseSearchQueryJsonAndStoreData(String mBookSearchListJSONString, String mSearchQuery)
     {
         CopyOnWriteArrayList<ContentValues> ContentValueArrayList;
-        ////Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + mSearchQuery + " *** " + mBookSearchListJSONString);
+        //Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + mSearchQuery + " *** " + mBookSearchListJSONString);
         if ( mBookSearchListJSONString.length() != 0 ) //When you have a list from Web Api Call
         {
             ContentValueArrayList = getBookSearchListDataFromJson(mBookSearchListJSONString, mSearchQuery); //Get the Content Values from JSON
-            ////Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + mSearchQuery);
+            //Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + mSearchQuery);
             if ( !ContentValueArrayList.isEmpty() )
                 storeDataInITBDProvider(ContentValueArrayList); // Initiate Bulk Insert into Books table
         }
@@ -218,13 +219,13 @@ public class Utility
             if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
             {
                 ContentValues AuthorValues = getBookIdAuthorDataFromJson(mBookSearchListJSONString); //...get Authors Info from JSON
-                ////Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
+                //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 if ( AuthorValues.size() != 0 )
                     storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
             else //Book Id is present in Books Table But web Api call doesnt return anything
             {
-                //Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
+                Log.d(LOG_TAG, "BookSearchListJSONString is empty for BookId : " + BookId);
             }
         }
         else // The Book Id cannot be found in the Books table....hmm suspicious bookId ?
@@ -246,7 +247,7 @@ public class Utility
             {
                 //Need not implement this for now because BookId is considered Private data and when the execution comes to this point means the origin of BookId is suspicious.
                 //There is no data to proceed further with that Book Id. Just Log the ID for debugging
-                //Log.d(LOG_TAG, "There is no such BookId in the Books Table and Web Api Call for : " + BookId);
+                Log.d(LOG_TAG, "There is no such BookId in the Books Table and Web Api Call for : " + BookId);
             }
         }
         BooksBookIdCursor.close();
@@ -296,12 +297,12 @@ public class Utility
             }
             else //{"Error":"Book not found!"}
             {
-                //Log.d(LOG_TAG, " getBookIdBookDataFromJson Error From Web Api Call : " + JSONError);
+                Log.d(LOG_TAG, " getBookIdBookDataFromJson Error From Web Api Call : " + JSONError);
             }
         }
         catch ( JSONException e )
         {
-            ////Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookIdBookDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return BookInfoValues;
@@ -349,12 +350,12 @@ public class Utility
             }
             else //{"Error":"Book not found!"}
             {
-                //Log.d(LOG_TAG, " getBookIdAuthorDataFromJson Error From Web Api Call : " + JSONError);
+                Log.d(LOG_TAG, " getBookIdAuthorDataFromJson Error From Web Api Call : " + JSONError);
             }
         }
         catch ( JSONException e )
         {
-            ////Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return AuthorValues;
@@ -387,7 +388,7 @@ public class Utility
                 ContentValues BookInfoValues;
 
                 BooksArray = BookSearchListJsonObject.getJSONArray(JSON_BOOKS);
-                ////Log.d(LOG_TAG, " BooksArray Length : " + BooksArray.length() + " BooksArray : " + BooksArray.toString());
+                //Log.d(LOG_TAG, " BooksArray Length : " + BooksArray.length() + " BooksArray : " + BooksArray.toString());
 
                 for ( int i = 0; i < BooksArray.length(); i++ )
                 {
@@ -399,53 +400,53 @@ public class Utility
                         JSONObject BookInfoJsonObject = BooksArray.getJSONObject(i);
                         long BookId = Long.parseLong(getValueFromJson(BookInfoJsonObject, JSON_ID));
                         BookInfoValues.put(BookEntry.COLUMN_BOOK_ID, BookId);
-                        ////Log.d(LOG_TAG, "*** BookId : " + BookId);
+                        //Log.d(LOG_TAG, "*** BookId : " + BookId);
 
                         String Title = getValueFromJson(BookInfoJsonObject, JSON_TITLE);
                         BookInfoValues.put(BookEntry.COLUMN_TITLE, Title);
 
                         String Subtitle = getValueFromJson(BookInfoJsonObject, JSON_SUBTITLE);
                         BookInfoValues.put(BookEntry.COLUMN_SUBTITLE, Subtitle);
-                        ////Log.d(LOG_TAG, " Subtitle : " + Subtitle);
+                        //Log.d(LOG_TAG, " Subtitle : " + Subtitle);
 
                         String Description = getValueFromJson(BookInfoJsonObject, JSON_DESCRIPTION);
                         BookInfoValues.put(BookEntry.COLUMN_DESCRIPTION, Description);
-                        ////Log.d(LOG_TAG, " Description : " + Description);
+                        //Log.d(LOG_TAG, " Description : " + Description);
 
                         long ISBN = Long.parseLong(getValueFromJson(BookInfoJsonObject, JSON_ISBN));
                         BookInfoValues.put(BookEntry.COLUMN_ISBN, ISBN);
-                        ////Log.d(LOG_TAG, " ISBN : " + ISBN);
+                        //Log.d(LOG_TAG, " ISBN : " + ISBN);
 
                         String ImageLink = getValueFromJson(BookInfoJsonObject, JSON_IMAGELINK);
                         BookInfoValues.put(BookEntry.COLUMN_IMAGE_LINK, ImageLink);
-                        ////Log.d(LOG_TAG, " ImageLink : " + ImageLink);
+                        //Log.d(LOG_TAG, " ImageLink : " + ImageLink);
 
                         BookInfoValues.put(BookEntry.COLUMN_BOOK_SEARCH_QUERY, mSearchQuery);
-                        ////Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
+                        //Log.d(LOG_TAG, " mSearchQuery : " + mSearchQuery);
                     }
                     catch ( JSONException e )
                     {
-                        ////Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
+                        //Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
                         e.printStackTrace();
                     }
                     catch ( NumberFormatException e )
                     {
-                        ////Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
+                        //Log.d(LOG_TAG, " getBookSearchListDataFromJson For Loop Error From Web Api Call : " + e.getMessage());
                         e.printStackTrace();
                     }
                     mContentValueArrayList.add(i, BookInfoValues);
-                    ////Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
+                    //Log.d(LOG_TAG, " BookInfoValues : " + BookInfoValues.toString());
                 }
             }
             else //{"Error":"Book not found!"}
             {
-                //Log.d(LOG_TAG, " getBookSearchListDataFromJson Error From Web Api Call : " + JSONError);
+                Log.d(LOG_TAG, " getBookSearchListDataFromJson Error From Web Api Call : " + JSONError);
             }
 
         }
         catch ( JSONException e )
         {
-            ////Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
+            //Log.d(LOG_TAG, "getBookSearchListDataFromJson JSON Parsing Error : " + e.getMessage());
             e.printStackTrace();
         }
         return mContentValueArrayList;
@@ -469,10 +470,10 @@ public class Utility
         }
         catch ( JSONException e )
         {
-            ////Log.d(LOG_TAG, " getValueFromJson : " + e.getMessage());
+            //Log.d(LOG_TAG, " getValueFromJson : " + e.getMessage());
             e.printStackTrace();
         }
-        ////Log.d(LOG_TAG, " getValueFromJson : " + mKey + " : " + mValue);
+        //Log.d(LOG_TAG, " getValueFromJson : " + mKey + " : " + mValue);
         return mValue;
     }
 
@@ -484,7 +485,7 @@ public class Utility
         context.getContentResolver().delete(BookEntry.buildBookCollectionUri(), null, null);
         context.getContentResolver().delete(AuthorEntry.buildAuthorsCollectionUri(), null, null);
         int rowCount = context.getContentResolver().bulkInsert(BookEntry.buildBookCollectionUri(), contentValueArrayList.toArray(myCV));
-        //Log.d(LOG_TAG, "BulkInsert done for row count : " + rowCount);
+        Log.d(LOG_TAG, "BulkInsert done for row count : " + rowCount);
     }
 
     private void storeDataInITBDProvider(String mTableName, long longBookId, ContentValues mContentValues) // This method is overloaded
@@ -498,7 +499,7 @@ public class Utility
         {
             BookIdInsertUri = context.getContentResolver().insert(AuthorEntry.buildAuthorsBookIdUri(longBookId), mContentValues);
         }
-        //Log.d(LOG_TAG, " Insert complete for URI : " + BookIdInsertUri);
+        Log.d(LOG_TAG, " Insert complete for URI : " + BookIdInsertUri);
     }
 
     private String getWebApiUriString(long mBookId)
@@ -520,7 +521,7 @@ public class Utility
         Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search_url)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
         IsbnQueryUri.appendQueryParameter("q", isbn);
         IsbnQueryUri.appendQueryParameter("type","isbn");
-        //Log.d(LOG_TAG, isbnLabel + " : " + isbn + " " + IsbnQueryUri.toString());
+        Log.d(LOG_TAG, isbnLabel + " : " + isbn + " " + IsbnQueryUri.toString());
         return IsbnQueryUri.toString();
     }
 
@@ -551,7 +552,7 @@ public class Utility
 
             /*if ( buffer.length() != 0 )
             {
-                ////Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
+                //Log.d(LOG_TAG, "buffer.toString() : " + buffer.toString());
             }*/
         }
         catch ( IOException e )
@@ -597,7 +598,7 @@ public class Utility
             BookFile.createNewFile();
 
             BookFileOutputStream = new FileOutputStream(BookFile);
-            //Log.d(LOG_TAG, " The Book is written to location : " + BookFile.getAbsolutePath());
+            Log.d(LOG_TAG, " The Book is written to location : " + BookFile.getAbsolutePath());
 
             // URL input
             URL fetchBookTaskUrl = new URL(mFileDownloadUrl);

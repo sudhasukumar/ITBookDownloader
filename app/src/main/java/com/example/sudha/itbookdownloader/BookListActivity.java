@@ -3,6 +3,7 @@ package com.example.sudha.itbookdownloader;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
 import android.content.Intent;
@@ -11,13 +12,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import static com.example.sudha.itbookdownloader.BookDetailActivity.BookDetailsFragment;
 import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.BookEntry;
@@ -26,21 +27,26 @@ import static com.example.sudha.itbookdownloader.data.ITBookDownloaderContract.B
 public class BookListActivity extends ActionBarActivity
 {
     private final        String LOG_TAG                     = BookListActivity.class.getSimpleName();
-    private static       String DefaultSearchQuery          = null;
     private static       String SearchQuery                 = null;
     private static       String ISBN                        = null;
     private static       String BookId                      = null;
-    private static final String PREVIOUS_SEARCH_QUERY_LABEL = "PreviousSearchQuery";
-
 
     private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.d(LOG_TAG,"BookListActivity onCreate : ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
-        BookListFragment bookListFragment = new BookListFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        BookListFragment bookListFragment = (BookListFragment) fragmentManager.findFragmentByTag("BookListFragment");
+        if ( bookListFragment == null)
+        {
+            bookListFragment = new BookListFragment();
+            fragmentManager.beginTransaction().add(R.id.book_list_activity, bookListFragment,"BookListFragment").commit();
+        }
+
         Bundle bundle;
         if ( savedInstanceState == null )
         {
@@ -50,20 +56,18 @@ public class BookListActivity extends ActionBarActivity
                 bundle = intent.getExtras();
                 String SearchQueryLabel = this.getString(R.string.search_query_label);
                 SearchQuery = bundle.getString(SearchQueryLabel);
-                DefaultSearchQuery = this.getString(R.string.search_query_string_default);
-                //Log.d(LOG_TAG, "Received Search Query from the Intent : " + SearchQuery);
+                //DefaultSearchQuery = this.getString(R.string.search_query_string_default);
+                Log.d(LOG_TAG, "Received Search Query from the Intent : " + SearchQuery);
                 bookListFragment.setArguments(bundle); //passing the search query in bundle to fragment to process
             }
-
-            getFragmentManager().beginTransaction().add(R.id.book_list_activity, bookListFragment).commit();
             //ITBDSyncAdapter.initializeSyncAdapter(this);
             //ITBDSyncAdapter.syncImmediately(this,SearchQuery,null);
         }
-
     }
 
     public void onItemSelected(String mBookId)
     {
+        Log.d(LOG_TAG,"BookListActivity onItemSelected : ");
         if (mTwoPane)
         {
             // In two-pane mode, show the detail view in this activity by adding or replacing the detail fragment using a fragment transaction.
@@ -84,14 +88,15 @@ public class BookListActivity extends ActionBarActivity
             showBookDetailIntent.putExtra(BookIdLabel, BookId);
             String IsbnLabel = this.getString(R.string.isbn_label);
             showBookDetailIntent.putExtra(IsbnLabel, ISBN);
-            //Log.d(LOG_TAG, "showBookDetailIntent is ready");
+            Log.d(LOG_TAG, "showBookDetailIntent is ready");
             startActivity(showBookDetailIntent);
          }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
+        Log.d(LOG_TAG,"BookListActivity onCreateOptionsMenu : ");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_book_list, menu);
         return true;
@@ -100,6 +105,7 @@ public class BookListActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        Log.d(LOG_TAG,"BookListActivity onOptionsItemSelected : ");
         int id = item.getItemId();
         if (id == R.id.action_settings)
         {
@@ -107,17 +113,17 @@ public class BookListActivity extends ActionBarActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
-    public static class BookListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  , FetchBooksForSearchQueryListener
+    public static class BookListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>  , FetchBooksInfoAsyncTaskListener
     {
         public static final String LOG_TAG = BookListFragment.class.getSimpleName();
+        //FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask;
+        private ProgressBar BookListProgressBar;
         private ITBDBookSearchAdapter mITBDBookSearchAdapter;
         private ListView BookListView;
-        private int USER_LIST_VIEW_POSITION = ListView.INVALID_POSITION;
-        private static final String USER_LIST_VIEW_POSITION_LABEL = "user_selected_position";
         private static final int BOOK_SEARCH_LOADER = 0;
-        private static final String[] BOOK_SEARCH_COLUMNS = {   //BookEntry.TABLE_NAME + "." + BookEntry.COLUMN_BOOK_ID,
+        private static final String[] BOOK_SEARCH_COLUMNS = {
                                                                 BookEntry._ID,
                                                                 BookEntry.COLUMN_TITLE,
                                                                 BookEntry.COLUMN_SUBTITLE,
@@ -138,24 +144,37 @@ public class BookListActivity extends ActionBarActivity
 
         public BookListFragment()
         {
-            setHasOptionsMenu(true);
+            Log.d(LOG_TAG,"BookListFragment() : ");
         }
 
         @Override
         public void onCreate(Bundle savedInstanceState)
         {
-            //Log.d(LOG_TAG,"BookListFragment onCreate : ");
+            Log.d(LOG_TAG,"BookListFragment onCreate : ");
             super.onCreate(savedInstanceState);
+            updateSearchBookList(SearchQuery, ISBN, BookId);
+            //setHasOptionsMenu(true);
+            setRetainInstance(true);
+        }
+
+        @Override
+        public void onStop()
+        {
+            Log.d(LOG_TAG,"BookListFragment onStop : ");
+            super.onStop();
+            //fetchBooksInfoAsyncTask.cancel(true);
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            //Log.d(LOG_TAG,"BookListFragment onCreateView : ");
+
+            Log.d(LOG_TAG, "BookListFragment onCreateView : ");
             mITBDBookSearchAdapter = new ITBDBookSearchAdapter(getActivity(), null, 0);
             View rootView = inflater.inflate(R.layout.fragment_book_list, container, false);
+            BookListProgressBar = (ProgressBar) rootView.findViewById(R.id.BookListProgressBar);
             BookListView = (ListView) rootView.findViewById(R.id.listview_book_search);
-            updateSearchBookList(SearchQuery, ISBN, BookId);
+            //updateSearchBookList(SearchQuery, ISBN, BookId);
             BookListView.setAdapter(mITBDBookSearchAdapter);
             BookListView.setClickable(true);
 
@@ -170,7 +189,7 @@ public class BookListActivity extends ActionBarActivity
                                                                     ISBN = cursor.getString(COL_ISBN);
                                                                     BookId = cursor.getString(COL_ID);
 
-                                                                    //Log.d(LOG_TAG, " The Chosen Book ID is : " + BookId + " The Chosen Book ISBN is : " + ISBN);
+                                                                    Log.d(LOG_TAG, " The Chosen Book ID is : " + BookId + " The Chosen Book ISBN is : " + ISBN);
                                                                     if (cursor.moveToPosition(position))
                                                                     {
                                                                         Activity myBookListActivity = getActivity();
@@ -178,87 +197,77 @@ public class BookListActivity extends ActionBarActivity
                                                                             ((BookListActivity) getActivity()).onItemSelected(BookId);
 
                                                                     }
-                                                                    USER_LIST_VIEW_POSITION = position;
+
                                                                 }
                                                             });
-            /*if ((savedInstanceState != null)&&(savedInstanceState.containsKey(PREVIOUS_SEARCH_QUERY_LABEL)))
-            {
-                String PreviousSearchQuery = savedInstanceState.getString(PREVIOUS_SEARCH_QUERY_LABEL);
-                if ( (PreviousSearchQuery != null) && (!PreviousSearchQuery.equals(SearchQuery)) )
-                    updateSearchBookList(SearchQuery, BookId);
-            }*/
 
-            if (( savedInstanceState != null )&& (savedInstanceState.containsKey(USER_LIST_VIEW_POSITION_LABEL)))
-                USER_LIST_VIEW_POSITION = savedInstanceState.getInt(USER_LIST_VIEW_POSITION_LABEL);
 
             return rootView;
         }
 
         private void updateSearchBookList(String searchQuery, String isbn, String bookId)
         {
+            Log.d(LOG_TAG,"BookListFragment updateSearchBookList : ");
             FetchBooksInfoAsyncTask fetchBooksInfoAsyncTask = new FetchBooksInfoAsyncTask(getActivity());
             fetchBooksInfoAsyncTask.asyncResponseDelegate = this;
             fetchBooksInfoAsyncTask.execute(searchQuery, isbn , bookId);
+            //fetchBooksInfoAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,searchQuery,isbn,bookId);
         }
 
         @Override
-        public void onFetchBooksForSearchQuery(String result)
+        public void onFetchBooksInfoStarted(Boolean isStarted)
         {
-            //Log.d(LOG_TAG, "Check if Data has changed in List view " + result);
+            Log.d(LOG_TAG,"BookListFragment onFetchBooksInfoStarted : ");
+            if ((BookListProgressBar == null))
+            {
+                BookListProgressBar = new ProgressBar(getActivity());
+                BookListProgressBar.setVisibility(View.VISIBLE);
+            }
+            else
+            {
+                BookListProgressBar.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onFetchBooksInfoProgressUpdate(Integer ProgressUpdate)
+        {
+            Log.d(LOG_TAG,"BookListFragment onFetchBooksInfoProgressUpdate : ");
+            BookListProgressBar.setProgress(ProgressUpdate);
+        }
+
+        @Override
+        public void onFetchBooksInfoComplete(String result)
+        {
+            Log.d(LOG_TAG,"BookListFragment onFetchBooksInfoComplete : ");
+            Log.d(LOG_TAG, "Check if Data has changed in List view " + result);
+            BookListProgressBar.setVisibility(View.GONE);
+            //getLoaderManager().restartLoader(BOOK_SEARCH_LOADER, null, this);
+            getLoaderManager().initLoader(BOOK_SEARCH_LOADER, null, this);
             mITBDBookSearchAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onFetchBooksInfoCancelled()
+        {
+            Log.d(LOG_TAG,"BookListFragment onFetchBooksInfoCancelled : ");
+            BookListProgressBar.setVisibility(View.GONE);
         }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState)
         {
-            //Log.d(LOG_TAG,"BookListFragment onActivityCreated : ");
-            // Initialise Loader here...Loader's lifecycle is bound to Activity Lifecycle not Fragment
-            getLoaderManager().initLoader(BOOK_SEARCH_LOADER, null, this);
+            Log.d(LOG_TAG,"BookListFragment onActivityCreated : ");
             super.onActivityCreated(savedInstanceState);
-        }
+            // Initialise Loader here...Loader's lifecycle is bound to Activity Lifecycle not Fragment
+            //getLoaderManager().initLoader(BOOK_SEARCH_LOADER, null, this);
 
-        @Override
-        public void onStop()
-        {
-            super.onStop();
-            //Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : " + BookId);
-        }
-
-        @Override
-        public void onStart()
-        {
-            super.onStart();
-            //Log.d(LOG_TAG, "BookListFragment onStop : SearchQuery : " + SearchQuery + " BookId : "  + BookId);
-        }
-
-        @Override
-        public void onResume()
-        {
-            //Log.d(LOG_TAG,"BookListFragment onResume : ");
-            super.onResume();
-            if ((SearchQuery != null) && (SearchQuery.equals(DefaultSearchQuery))) //&& !mLocation.equals(Utility.getPreferredLocation(getActivity())))
-            {
-                SearchQuery = getArguments().getString(getString(R.string.search_query_label));
-                getLoaderManager().restartLoader(BOOK_SEARCH_LOADER, null, this);
-            }
-        }
-
-        @Override
-        public void onSaveInstanceState(Bundle outState)
-        {
-            //Log.d(LOG_TAG,"BookListFragment onSaveInstanceState : ");
-            // When tablets rotate, the currently selected list item needs to be saved. When no item is selected, mPosition will be set to Listview.INVALID_POSITION, so check for that before storing.
-            if (USER_LIST_VIEW_POSITION != ListView.INVALID_POSITION)
-            {
-                outState.putInt(USER_LIST_VIEW_POSITION_LABEL, USER_LIST_VIEW_POSITION);
-            }
-            outState.putString(PREVIOUS_SEARCH_QUERY_LABEL, SearchQuery);
-            super.onSaveInstanceState(outState);
         }
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args)
         {
+            Log.d(LOG_TAG,"BookListFragment onCreateLoader : ");
             final String SORT_TITLE_ASC = BookEntry.COLUMN_TITLE + " ASC";
             Uri BOOK_SEARCH_URI = BookEntry.buildBookSearchUriForSearchQuery(SearchQuery);
             return new CursorLoader(getActivity(), BOOK_SEARCH_URI, BOOK_SEARCH_COLUMNS, null, null, SORT_TITLE_ASC);
@@ -267,14 +276,14 @@ public class BookListActivity extends ActionBarActivity
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data)
         {
+            Log.d(LOG_TAG,"BookListFragment onLoadFinished : ");
             mITBDBookSearchAdapter.swapCursor(data);
-            if (USER_LIST_VIEW_POSITION != ListView.INVALID_POSITION)
-                BookListView.smoothScrollToPosition(USER_LIST_VIEW_POSITION);
         }
 
         @Override
         public void onLoaderReset(Loader loader)
         {
+            Log.d(LOG_TAG,"BookListFragment onLoaderReset : ");
             mITBDBookSearchAdapter.swapCursor(null);
         }
 
@@ -286,5 +295,5 @@ public class BookListActivity extends ActionBarActivity
 showBookDetailIntent.setAction(Intent.ACTION_VIEW);
 showBookDetailIntent.setType("text/plain");
 showBookDetailIntent.putExtra(getActivity().getString(R.string.book_id_label), BookId);
-//Log.d(LOG_TAG, "showBookDetailIntent is ready");
+Log.d(LOG_TAG, "showBookDetailIntent is ready");
 view.getContext().startActivity(showBookDetailIntent);*/

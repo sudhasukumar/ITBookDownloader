@@ -16,20 +16,20 @@ public class StartSearchListener implements SearchView.OnQueryTextListener // Se
     public StartSearchListener(Context context)
     {
         searchContext = context;
-        //Log.d(LOG_TAG, "StartSearchListener constructor");
+        Log.d(LOG_TAG, "StartSearchListener constructor");
     }
 
     @Override
     public boolean onQueryTextChange(String newText)
     {
-        ////Log.d(LOG_TAG, "StartSearchListener onQueryTextChange : " + newText);
+        //Log.d(LOG_TAG, "StartSearchListener onQueryTextChange : " + newText);
         return false;
     }
 
     @Override
     public boolean onQueryTextSubmit(String query)
     {
-        //Log.d(LOG_TAG, "StartSearchListener onQueryTextSubmit : " + query);
+        Log.d(LOG_TAG, "StartSearchListener onQueryTextSubmit : " + query);
         //Intent searchQueryIntent = new Intent(Intent.ACTION_SEARCH);
         Intent searchQueryIntent = new Intent(searchContext,BookListActivity.class);
         searchQueryIntent.setAction(Intent.ACTION_SEARCH);
@@ -44,27 +44,27 @@ public class StartSearchListener implements SearchView.OnQueryTextListener // Se
     /*@Override
     public void onFocusChange(View v, boolean hasFocus)
     {
-        //Log.d(LOG_TAG, "StartSearchListener onFocusChange");
+        Log.d(LOG_TAG, "StartSearchListener onFocusChange");
         Toast.makeText(searchContext, String.valueOf(hasFocus), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onClick(View v)
     {
-        //Log.d(LOG_TAG, "StartSearchListener onClick");
+        Log.d(LOG_TAG, "StartSearchListener onClick");
     }
 
     @Override
     public boolean onSuggestionSelect(int position)
     {
-        //Log.d(LOG_TAG, "StartSearchListener onSuggestionSelect");
+        Log.d(LOG_TAG, "StartSearchListener onSuggestionSelect");
         return false;
     }
 
     @Override
     public boolean onSuggestionClick(int position)
     {
-        //Log.d(LOG_TAG, "StartSearchListener onSuggestionClick");
+        Log.d(LOG_TAG, "StartSearchListener onSuggestionClick");
         return false;
     }*/
 }

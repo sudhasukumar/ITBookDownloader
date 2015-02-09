@@ -69,6 +69,7 @@
     <string name="notification_dismiss_label">Dismiss</string>
     <string name="itbd_big_notification_text">Book Download Complete. Do you want to open it ?</string>
     <string name="open_book_chooser_title">Open the book with :</string>
+    <string name="action_share_title">Share</string>
 
 
 </resources>

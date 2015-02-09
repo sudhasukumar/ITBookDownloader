@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 // An IntentService subclass for handling asynchronous download requests in a service on a separate handler thread.
 public class ITBookDownloadService extends IntentService
 {
-    //private static String LOG_TAG = ITBookDownloadService.class.getSimpleName();
+    private static String LOG_TAG = ITBookDownloadService.class.getSimpleName();
 
     Notification.Builder builder;
 
@@ -104,7 +105,7 @@ public class ITBookDownloadService extends IntentService
         OpenBookFromNotificationIntent.setAction(Constants.ACTION_OPEN_DOWNLOADED_BOOK);
         //OpenBookFromNotificationIntent.setType("text/plain");
         OpenBookFromNotificationIntent.putExtra(this.getString(R.string.downloaded_file_url_label), mDownloadedFileUrl);
-        //Log.d(LOG_TAG, "OpenDownloadedBookIntent is ready");
+        Log.d(LOG_TAG, "OpenDownloadedBookIntent is ready");
         PendingIntent PendingOpenDocIntent = PendingIntent.getService(this, 0, OpenBookFromNotificationIntent, 0);
 
         // Constructs the Builder object.Sets the big view "big text" style and supplies the text that will be displayed in the detail area of the expanded notification.

@@ -4,14 +4,17 @@
               android:layout_width="match_parent"
               android:layout_height="120dp"
               android:minHeight="?android:attr/listPreferredItemHeight"
-              android:background="@drawable/list_row_selector">
+              android:background="@drawable/list_row_selector"
+              android:weightSum="4"
+>
 
     <FrameLayout
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:layout_gravity="center"
-        >
+        android:layout_weight="1"
+    >
         <!-- Thumbnail Image -->
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/list_item_book_image_view"
@@ -28,29 +31,35 @@
                   android:orientation="vertical"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:layout_weight="7"
-                  android:layout_gravity="end">
+                  android:layout_weight="3"
+                  android:layout_gravity="end"
+    >
 
-
+<!--Book Title-->
         <TextView
             android:id="@+id/list_item_book_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceLarge"/>
+            android:textAppearance="?android:textAppearanceLarge"
+        />
 
+<!--Book Subtitle-->
         <TextView
             android:id="@+id/list_item_book_subtitle_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
-            android:textAppearance="?android:textAppearanceSmall"/>
+            android:textAppearance="?android:textAppearanceSmall"
+        />
 
+<!--ISBN-->
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="horizontal"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:layout_gravity="start">
+                      android:layout_gravity="start"
+        >
 
                         <TextView
                             android:id="@+id/list_item_book_ISBN_textview_label"

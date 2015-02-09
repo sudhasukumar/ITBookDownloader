@@ -1,13 +1,10 @@
 package com.example.sudha.itbookdownloader;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -31,7 +28,7 @@ public class MainActivity extends ActionBarActivity
 
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -47,7 +44,7 @@ public class MainActivity extends ActionBarActivity
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public static class MainFragment extends Fragment
     {
@@ -68,7 +65,7 @@ public class MainActivity extends ActionBarActivity
             /*startSearchView.setOnQueryTextFocusChangeListener(startSearchListener);
             startSearchView.setOnSuggestionListener(startSearchListener);
             startSearchView.setOnClickListener(startSearchListener);*/
-            //Log.d(LOG_TAG, "StartSearchListener is set");
+            Log.d(LOG_TAG, "StartSearchListener is set");
             return rootView;
         }
     }

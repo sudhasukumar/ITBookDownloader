@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -29,7 +30,7 @@ public class OpenDownloadedBookActivity extends Activity
                 bundle = intent.getExtras();
                 String DownloadedFileAbsoluteUrl = bundle.getString(this.getString(R.string.downloaded_file_url_label));
                 showPdf(DownloadedFileAbsoluteUrl);
-                //Log.d(LOG_TAG, "OpenDownloadedBookActivity Opening File at : " + DownloadedFileAbsoluteUrl);
+                Log.d(LOG_TAG, "OpenDownloadedBookActivity Opening File at : " + DownloadedFileAbsoluteUrl);
             }
         }
     }

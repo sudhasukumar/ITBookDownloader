@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
 <!-- Book Image, Book Title, Book Subtitle , Author, ISBN, year, page, publisher, Description, Download Link -->
     <LinearLayout
         android:gravity="center_vertical"
@@ -11,6 +12,15 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:padding="15dp" >
+
+        <ProgressBar
+            android:id="@+id/BookDetailProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            style="@android:style/Widget.ProgressBar.Large.Inverse"
+           
+        />
 
 <!--Book Image-->
     <com.android.volley.toolbox.NetworkImageView
