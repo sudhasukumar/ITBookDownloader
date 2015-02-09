@@ -38,10 +38,10 @@ public class FetchBooksInfoAsyncTask extends AsyncTask<String, Integer, String>
     @Override
     protected String doInBackground(String... params)
     {
-        Utility utility = new Utility(context);
+        //Utility utility = new Utility(context);
         try
         {
-            utility.prepareInputForAsyncTask(params[SEARCH_QUERY], params[ISBN], params[BOOK_ID]);
+            Utility.prepareInputForAsyncTask(context,params[SEARCH_QUERY], params[ISBN], params[BOOK_ID]);
         }
         catch ( Exception e )
         {

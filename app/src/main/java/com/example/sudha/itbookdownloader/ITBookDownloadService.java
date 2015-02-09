@@ -66,8 +66,8 @@ public class ITBookDownloadService extends IntentService
     {
         HashMap<String,String> FileDownloadResults;
 
-        Utility utility = new Utility(this);
-        FileDownloadResults = utility.makeBookDownloadNetworkApiCall(mFileDownloadUrl, mWebsiteBookNumber, mFileName, mFileFormat);
+        //Utility utility = new Utility(this);
+        FileDownloadResults = Utility.makeBookDownloadNetworkApiCall(this,mFileDownloadUrl, mWebsiteBookNumber, mFileName, mFileFormat);
         if (FileDownloadResults.get(Constants.FILE_DOWNLOAD_STATUS_KEY).equals(Constants.FILE_DOWNLOAD_SUCCESS))
         {
             String BookFilePath = FileDownloadResults.get(Constants.FILE_ABSOLUTE_PATH);

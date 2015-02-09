@@ -36,43 +36,43 @@ public class Utility
 {
     public static final String LOG_TAG = Utility.class.getSimpleName();
 
-    private final Context context;
+    /*private final Context context;
 
     public Utility(Context context)
     {
         this.context = context;
-    }
+    }*/
 
-    protected void prepareInputForAsyncTask(String mSearchQuery, String mIsbn, String mBookId)
+    protected static void prepareInputForAsyncTask(Context context,String mSearchQuery, String mIsbn, String mBookId)
     {
-        String searchQuery = prepareInputForBookSearch(context.getString(R.string.search_query_label),mSearchQuery);
-        String Isbn = prepareInputForBookSearch(context.getString(R.string.isbn_label),mIsbn);
-        String bookId = prepareInputForBookSearch(context.getString(R.string.book_id_label),mBookId);
+        String searchQuery = prepareInputForBookSearch(context, context.getString(R.string.search_query_label),mSearchQuery);
+        String Isbn = prepareInputForBookSearch(context, context.getString(R.string.isbn_label),mIsbn);
+        String bookId = prepareInputForBookSearch(context, context.getString(R.string.book_id_label),mBookId);
         String WebApiUriString;
         if( (Isbn.equals("0") ) && (bookId.equals("0") ) ) // SearchQuery Search
         {
-            WebApiUriString = getWebApiUriString(searchQuery);
+            WebApiUriString = getWebApiUriString(context, searchQuery);
             String BookSearchListJSONString = makeNetworkApiCall(WebApiUriString);
-            parseSearchQueryJsonAndStoreData(BookSearchListJSONString, searchQuery);
+            parseSearchQueryJsonAndStoreData(context, BookSearchListJSONString, searchQuery);
         }
         else if ( (!bookId.equals("0") ) && (searchQuery.equals("") ) && (!mIsbn.equals("0")) ) // ISBN Search
         {
-            WebApiUriString = getWebApiUriString(context.getString(R.string.isbn_label), Isbn);
+            WebApiUriString = getWebApiUriString(context, context.getString(R.string.isbn_label), Isbn);
             String BookISBNSearchHTMLString = makeNetworkApiCall(WebApiUriString);
             String WebsiteBookNumber = getWebsiteBookNumber(BookISBNSearchHTMLString);
-            String BookDetailsWebUri = getBookDetailsWebUri(WebsiteBookNumber);
+            String BookDetailsWebUri = getBookDetailsWebUri(context, WebsiteBookNumber);
             String BookSearchListJSONString = makeNetworkApiCall(BookDetailsWebUri);
-            parseWebsiteHtmlAndStoreData(BookSearchListJSONString, mIsbn , bookId , WebsiteBookNumber);  // Store websiteBookNumber in Author Data for referer field value to download file
+            parseWebsiteHtmlAndStoreData(context, BookSearchListJSONString, mIsbn , bookId , WebsiteBookNumber);  // Store websiteBookNumber in Author Data for referer field value to download file
         }
         else if ( (Isbn.equals("0")) && (searchQuery.equals("") ) ) // BookId Search
         {
-            WebApiUriString = getWebApiUriString(Long.parseLong(bookId));
+            WebApiUriString = getWebApiUriString(context, Long.parseLong(bookId));
             String BookSearchListJSONString = makeNetworkApiCall(WebApiUriString);
-            parseAuthorsBookIdAndStoreData(BookSearchListJSONString, bookId);
+            parseAuthorsBookIdAndStoreData(context, BookSearchListJSONString, bookId);
         }
     }
 
-    private void parseWebsiteHtmlAndStoreData(String mBookSearchListJSONString, String mIsbn , String mBookId, String mWebsiteBookNumber)
+    private static void parseWebsiteHtmlAndStoreData(Context context, String mBookSearchListJSONString, String mIsbn , String mBookId, String mWebsiteBookNumber)
     {
         long BookId = Long.parseLong(mBookId);
         // Check if the BookId is present in the Books table...It should be there since the search with BookId originated from that info
@@ -83,12 +83,12 @@ public class Utility
             long LongBookIdFromJson = BooksBookIdCursor.getLong(BookIdIndex);
             if ( mBookSearchListJSONString.length() != 0 )//BookId in Books Table ...Now Fetch Author data
             {
-                ContentValues AuthorValues = getWebsiteBookNumberAuthorData(mBookSearchListJSONString, mIsbn , mBookId , mWebsiteBookNumber); //...get Authors Info from WebsiteBookNumber HTML Doc
+                ContentValues AuthorValues = getWebsiteBookNumberAuthorData(context, mBookSearchListJSONString, mIsbn , mBookId , mWebsiteBookNumber); //...get Authors Info from WebsiteBookNumber HTML Doc
                 //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 Cursor AuthorsBookIdCursor = context.getContentResolver().query(AuthorEntry.buildAuthorsBookIdUri(BookId), new String[]{BookEntry._ID}, null, null, null);
                 int AuthorsBookIdCursorCount = AuthorsBookIdCursor.getCount();
                 if (( AuthorValues.size() != 0 )&&(AuthorsBookIdCursorCount == 0))
-                    storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
+                    storeDataInITBDProvider(context, AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
             else //Book Id is present in Books Table But web Api call doesnt return anything
             {
@@ -97,7 +97,7 @@ public class Utility
         }
     }
 
-    private ContentValues getWebsiteBookNumberAuthorData(String mBookSearchListJSONString, String mIsbn, String mBookId, String mWebsiteBookNumber)
+    private static ContentValues getWebsiteBookNumberAuthorData(Context context, String mBookSearchListJSONString, String mIsbn, String mBookId, String mWebsiteBookNumber)
     {
 
         ContentValues AuthorValues = new ContentValues();
@@ -109,7 +109,7 @@ public class Utility
             Element TdJustifyLinkElement = BookIdDocumentBody.getElementsByClass("justify").first();
             String BookDescription = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "description").first().text();
             //Log.d(LOG_TAG, "Book Description : " + BookDescription);
-            updateBookDescriptionInITBDProvider(mBookId,BookDescription); //update the new description
+            updateBookDescriptionInITBDProvider(context, mBookId,BookDescription); //update the new description
 
             String AuthorName = TdJustifyLinkElement.getElementsByAttributeValueMatching("itemprop", "author").first().text();
             //Log.d(LOG_TAG, "AuthorName : " + AuthorName);
@@ -144,7 +144,7 @@ public class Utility
 
     }
 
-    private void updateBookDescriptionInITBDProvider(String mBookId, String bookDescription)
+    private static void updateBookDescriptionInITBDProvider(Context context, String mBookId, String bookDescription)
     {
         ContentValues descriptionCV = new ContentValues();
         descriptionCV.put(BookEntry.COLUMN_DESCRIPTION,bookDescription);
@@ -152,14 +152,14 @@ public class Utility
         //Log.d(LOG_TAG," Updated Description in Books Table for Book Id : " + mBookId);
     }
 
-    private String getBookDetailsWebUri(String websiteBookNumber)
+    private static String getBookDetailsWebUri(Context context, String websiteBookNumber)
     {
         Uri.Builder BookDetailsWebsiteUri = Uri.parse(context.getString(R.string.book_number_website_book_search)).buildUpon(); //http://www.it-ebooks.info/book/{345}/
         BookDetailsWebsiteUri.appendPath(websiteBookNumber);
         return BookDetailsWebsiteUri.toString();
     }
 
-    private String getWebsiteBookNumber(String bookISBNSearchHTMLString)
+    private static String getWebsiteBookNumber(String bookISBNSearchHTMLString)
     {
         String WebsiteBookNumber = Jsoup.parse(bookISBNSearchHTMLString).select("a[href*=/book/]").first().attr("href");
         String[] WebsiteBookNumberArray = WebsiteBookNumber.split("/"); //(6,10);
@@ -168,7 +168,7 @@ public class Utility
     }
 
 
-    private String prepareInputForBookSearch(String mKey,String mValue)
+    private static String prepareInputForBookSearch(Context context, String mKey,String mValue)
     {
         if(mKey.equalsIgnoreCase(context.getString(R.string.search_query_label)))
         {
@@ -194,7 +194,7 @@ public class Utility
         return mValue;
     }
 
-    protected void parseSearchQueryJsonAndStoreData(String mBookSearchListJSONString, String mSearchQuery)
+    protected static void parseSearchQueryJsonAndStoreData(Context context, String mBookSearchListJSONString, String mSearchQuery)
     {
         CopyOnWriteArrayList<ContentValues> ContentValueArrayList;
         //Log.d(LOG_TAG, "BookSearchListJSONString for SearchQuery : " + mSearchQuery + " *** " + mBookSearchListJSONString);
@@ -203,11 +203,11 @@ public class Utility
             ContentValueArrayList = getBookSearchListDataFromJson(mBookSearchListJSONString, mSearchQuery); //Get the Content Values from JSON
             //Log.d(LOG_TAG, "BulkInsert initiated for SearchQuery : " + mSearchQuery);
             if ( !ContentValueArrayList.isEmpty() )
-                storeDataInITBDProvider(ContentValueArrayList); // Initiate Bulk Insert into Books table
+                storeDataInITBDProvider(context, ContentValueArrayList); // Initiate Bulk Insert into Books table
         }
     }
 
-    protected  void parseAuthorsBookIdAndStoreData(String mBookSearchListJSONString, String mBookId)
+    protected  static void parseAuthorsBookIdAndStoreData(Context context, String mBookSearchListJSONString, String mBookId)
     {
         long BookId = Long.parseLong(mBookId);
         // Check if the BookId is present in the Books table...It should be there since the search with BookId originated from that info
@@ -221,7 +221,7 @@ public class Utility
                 ContentValues AuthorValues = getBookIdAuthorDataFromJson(mBookSearchListJSONString); //...get Authors Info from JSON
                 //Log.d(LOG_TAG, "Author Insert initiated for BookId : " + BookId);
                 if ( AuthorValues.size() != 0 )
-                    storeDataInITBDProvider(AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
+                    storeDataInITBDProvider(context, AuthorEntry.TABLE_NAME, LongBookIdFromJson, AuthorValues); //Insert the JSON info into Authors Table.
             }
             else //Book Id is present in Books Table But web Api call doesnt return anything
             {
@@ -238,8 +238,8 @@ public class Utility
                 //If Cvs are not empty then insert both Book and Author Info for Book Id in DB
                 if ( (BookInfoValues.size() != 0) && (AuthorValues.size() != 0) )
                 {
-                    storeDataInITBDProvider(BookEntry.TABLE_NAME, BookId, BookInfoValues);
-                    storeDataInITBDProvider(AuthorEntry.TABLE_NAME, BookId, AuthorValues);
+                    storeDataInITBDProvider(context, BookEntry.TABLE_NAME, BookId, BookInfoValues);
+                    storeDataInITBDProvider(context, AuthorEntry.TABLE_NAME, BookId, AuthorValues);
                 }
 
             }
@@ -254,7 +254,7 @@ public class Utility
 
     }
 
-    private ContentValues getBookIdBookDataFromJson(String bookInfoDataJSONString)
+    private static ContentValues getBookIdBookDataFromJson(String bookInfoDataJSONString)
     {
         //JSON fields to extract info from JSON String
         final String JSON_ERROR = "Error";
@@ -309,7 +309,7 @@ public class Utility
     }
 
 
-    private ContentValues getBookIdAuthorDataFromJson(String bookIdAuthorJSONString)
+    private static ContentValues getBookIdAuthorDataFromJson(String bookIdAuthorJSONString)
     {
         final String JSON_ERROR = "Error";
         final String JSON_ZERO_SUCCESS_CODE = "0";
@@ -362,7 +362,7 @@ public class Utility
 
     }
 
-    private CopyOnWriteArrayList<ContentValues> getBookSearchListDataFromJson(String mBookSearchListJSONString, String mSearchQuery)
+    private static CopyOnWriteArrayList<ContentValues> getBookSearchListDataFromJson(String mBookSearchListJSONString, String mSearchQuery)
     {
         JSONArray BooksArray;
         //JSON fields to extract info from JSON String
@@ -477,7 +477,7 @@ public class Utility
         return mValue;
     }
 
-    private void storeDataInITBDProvider(CopyOnWriteArrayList<ContentValues> contentValueArrayList) // This method is overloaded
+    private static void storeDataInITBDProvider(Context context, CopyOnWriteArrayList<ContentValues> contentValueArrayList) // This method is overloaded
     {
         final int RESULTS_PER_PAGE = 10;
         ContentValues[] myCV = new ContentValues[RESULTS_PER_PAGE];
@@ -488,7 +488,7 @@ public class Utility
         Log.d(LOG_TAG, "BulkInsert done for row count : " + rowCount);
     }
 
-    private void storeDataInITBDProvider(String mTableName, long longBookId, ContentValues mContentValues) // This method is overloaded
+    private static void storeDataInITBDProvider(Context context, String mTableName, long longBookId, ContentValues mContentValues) // This method is overloaded
     {
         Uri BookIdInsertUri = Uri.EMPTY;
         if ( mTableName.equals(BookEntry.TABLE_NAME) )
@@ -502,21 +502,21 @@ public class Utility
         Log.d(LOG_TAG, " Insert complete for URI : " + BookIdInsertUri);
     }
 
-    private String getWebApiUriString(long mBookId)
+    private static String getWebApiUriString(Context context, long mBookId)
     {
         Uri.Builder bookQueryUri = Uri.parse(context.getString(R.string.api_book_id)).buildUpon();
         bookQueryUri.appendPath(String.valueOf(mBookId));
         return bookQueryUri.toString();
     }
 
-    private String getWebApiUriString(String mSearchQuery)
+    private static String getWebApiUriString(Context context, String mSearchQuery)
     {
         Uri.Builder searchQueryUri = Uri.parse(context.getString(R.string.api_book_search)).buildUpon();
         searchQueryUri.appendPath(mSearchQuery);
         return searchQueryUri.toString();
     }
 
-    private String getWebApiUriString(String isbnLabel, String isbn)
+    private static String getWebApiUriString(Context context, String isbnLabel, String isbn)
     {
         Uri.Builder IsbnQueryUri = Uri.parse(context.getString(R.string.isbn_website_book_search_url)).buildUpon(); //http://it-ebooks.info/search/?q=9781430238317&type=isbn
         IsbnQueryUri.appendQueryParameter("q", isbn);
@@ -525,7 +525,7 @@ public class Utility
         return IsbnQueryUri.toString();
     }
 
-    String makeNetworkApiCall(String ITEbooksInfoUrl)
+    static String makeNetworkApiCall(String ITEbooksInfoUrl)
     {
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -579,7 +579,7 @@ public class Utility
         return buffer.toString();
     }
 
-    HashMap<String,String> makeBookDownloadNetworkApiCall(String mFileDownloadUrl, String mWebsiteBookNumber, String mFileName, String mFileFormat)
+    static HashMap<String,String> makeBookDownloadNetworkApiCall(Context context, String mFileDownloadUrl, String mWebsiteBookNumber, String mFileName, String mFileFormat)
     {
         HashMap<String,String> FileDownloadResults = new HashMap<>(2);
 
@@ -592,11 +592,12 @@ public class Utility
             //File output            File(File dir, String name)
             String SDCardRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
             File ITBDDir = new File(SDCardRoot + File.separator + context.getString(R.string.ITBD_download_dir_path));
-            ITBDDir.mkdirs();
+            boolean isDirCreated  = ITBDDir.mkdirs();
+            Log.d(LOG_TAG, " The Directory to write is ready : " + isDirCreated);
             String FileName = mFileName.trim() + "." + mFileFormat.toLowerCase();
             BookFile = new File(ITBDDir,FileName);
-            BookFile.createNewFile();
-
+            boolean isFileCreated  = BookFile.createNewFile();
+            Log.d(LOG_TAG, " The File to write is ready : " + isFileCreated);
             BookFileOutputStream = new FileOutputStream(BookFile);
             Log.d(LOG_TAG, " The Book is written to location : " + BookFile.getAbsolutePath());
 
