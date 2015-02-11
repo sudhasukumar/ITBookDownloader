@@ -172,7 +172,7 @@ public class BookDetailActivity extends ActionBarActivity
             }
             fetchBookIdDetails(BookIsbnFromList, BookId);
             setHasOptionsMenu(true);
-            setRetainInstance(true);
+            //setRetainInstance(true);
         }
 
         private void fetchBookIdDetails(String mBookIsbnFromList, String mBookId)

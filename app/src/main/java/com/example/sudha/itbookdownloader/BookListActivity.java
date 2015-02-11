@@ -40,12 +40,33 @@ public class BookListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
         FragmentManager fragmentManager = getFragmentManager();
-        BookListFragment bookListFragment = (BookListFragment) fragmentManager.findFragmentByTag("BookListFragment");
-        if ( bookListFragment == null)
+        BookListFragment bookListFragment = new BookListFragment();
+        if (findViewById(R.id.book_detail_container) != null)
         {
-            bookListFragment = new BookListFragment();
-            fragmentManager.beginTransaction().add(R.id.book_list_activity, bookListFragment,"BookListFragment").commit();
+            mTwoPane = true;
+            if (savedInstanceState == null)
+            {
+                fragmentManager.beginTransaction().replace(R.id.book_list_container, bookListFragment).commit();
+                fragmentManager.beginTransaction().replace(R.id.book_detail_container, new BookDetailsFragment()).commit();
+            }
+        } else
+        {
+            mTwoPane = false;
+            fragmentManager.beginTransaction().add(R.id.book_list_activity , bookListFragment , "BookListFragment").commit();
         }
+
+
+
+        if (bookListFragment != null)
+        {
+            Log.d(LOG_TAG, " Book List Fragment is not null");
+        }
+
+        if (bookListFragment.isAdded())
+        {
+            Log.d(LOG_TAG, " Book List Fragment is added already");
+        }
+
 
         Bundle bundle;
         if ( savedInstanceState == null )
@@ -77,7 +98,7 @@ public class BookListActivity extends ActionBarActivity
             BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
             bookDetailsFragment.setArguments(args);
 
-            getFragmentManager().beginTransaction().replace(R.id.book_detail_activity, bookDetailsFragment).commit();
+            getFragmentManager().beginTransaction().replace(R.id.book_detail_container, bookDetailsFragment).commit();
         }
         else
         {
@@ -154,7 +175,7 @@ public class BookListActivity extends ActionBarActivity
             super.onCreate(savedInstanceState);
             updateSearchBookList(SearchQuery, ISBN, BookId);
             //setHasOptionsMenu(true);
-            setRetainInstance(true);
+            //setRetainInstance(true);
         }
 
         @Override
